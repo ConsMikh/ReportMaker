@@ -29,7 +29,7 @@
     <element xsi:type="archimate:ApplicationProcess" name="ETL" id="id-cb4dd13fcdb4453a9ec29468ef0fd683"/>
     <element xsi:type="archimate:ApplicationProcess" name="Парсинг файлов заметок на наличие записей о помидорках по датам" id="id-aafdc35d05ba48319b3b6a3bd886d85d"/>
     <element xsi:type="archimate:ApplicationProcess" name="Загрузка записей о помидорках в DataFrame" id="id-d7cb75f3eac44c01a5cdc92499104b47"/>
-    <element xsi:type="archimate:ApplicationProcess" name="Трансформация записей для DataFrame по определенным сценариям требованиям" id="id-cda85979ca134b7e803b83599379f688"/>
+    <element xsi:type="archimate:ApplicationProcess" name="Трансформация записей для DataFrame " id="id-cda85979ca134b7e803b83599379f688"/>
     <element xsi:type="archimate:ApplicationProcess" name="Заполнение пустых значений" id="id-89d0492a64da4c14838d83e73b7a5abd"/>
     <element xsi:type="archimate:ApplicationProcess" name="Выгрузка DataFrame в файл" id="id-2d1048ed46bb4d20a4dd0531fbb63edb"/>
     <element xsi:type="archimate:ApplicationProcess" name="Загрузка файла в PowerBI" id="id-ba4f23f3006e4ed7a2ef410826b60867"/>
@@ -184,7 +184,7 @@
         </sourceConnection>
       </child>
       <child xsi:type="archimate:DiagramObject" id="id-368d76a9bf7c49a995a1fa1b9b33f05a" targetConnections="id-5d5b11cd381c4351aa55469717addcc9" archimateElement="id-cb4dd13fcdb4453a9ec29468ef0fd683">
-        <bounds x="516" y="252" width="217" height="397"/>
+        <bounds x="516" y="252" width="217" height="385"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-3113fdd787cd41afa65978ef9aef9b14" source="id-368d76a9bf7c49a995a1fa1b9b33f05a" target="id-c2276cc18f0b4e37a218ec4617924b41" archimateRelationship="id-7e92fe2f5f044fb6af823bc64b639fdf">
           <bendpoint startX="132" startY="-138" endX="-114" endY="-132"/>
         </sourceConnection>
@@ -198,14 +198,14 @@
           <sourceConnection xsi:type="archimate:Connection" id="id-d21d30cd130746ce87044fd0aba39b97" source="id-91aa4eeb8da049138d256d6895b9afac" target="id-e356d63613ef437da42b041a84ae05b8" archimateRelationship="id-b266aaaa05dc40f1acb859c4759a106f"/>
         </child>
         <child xsi:type="archimate:DiagramObject" id="id-8027d58e12364477a3819e93c3cb8799" targetConnections="id-d0fc073934d24180b68592a009b1b375 id-9f1979ae6aed40ed90b9b37344151981" archimateElement="id-d7cb75f3eac44c01a5cdc92499104b47">
-          <bounds x="24" y="324" width="169" height="55"/>
+          <bounds x="24" y="300" width="169" height="55"/>
         </child>
         <child xsi:type="archimate:DiagramObject" id="id-e356d63613ef437da42b041a84ae05b8" targetConnections="id-1003eeae82f74789a282568fcc4ff3cc id-d21d30cd130746ce87044fd0aba39b97" archimateElement="id-cda85979ca134b7e803b83599379f688">
-          <bounds x="24" y="132" width="169" height="97"/>
+          <bounds x="24" y="132" width="169" height="49"/>
           <sourceConnection xsi:type="archimate:Connection" id="id-8d909dcaa3234f07b2d85ce2c4553705" source="id-e356d63613ef437da42b041a84ae05b8" target="id-98c49557eecd4fbfa2f7132bfc5d5ce8" archimateRelationship="id-91ebd053b2514d93aebc7d8ee327d741"/>
         </child>
         <child xsi:type="archimate:DiagramObject" id="id-98c49557eecd4fbfa2f7132bfc5d5ce8" targetConnections="id-97bf2b5e99ea4fd98bf76ac572d2a12a id-8d909dcaa3234f07b2d85ce2c4553705" archimateElement="id-89d0492a64da4c14838d83e73b7a5abd">
-          <bounds x="24" y="252" width="169" height="49"/>
+          <bounds x="24" y="216" width="169" height="49"/>
           <sourceConnection xsi:type="archimate:Connection" id="id-9f1979ae6aed40ed90b9b37344151981" source="id-98c49557eecd4fbfa2f7132bfc5d5ce8" target="id-8027d58e12364477a3819e93c3cb8799" archimateRelationship="id-d0ba86868a8d4400a04c4b05d855e047"/>
         </child>
       </child>
