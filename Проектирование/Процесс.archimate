@@ -4,7 +4,7 @@
   <folder name="Business" id="id-2cf40976f508482e96373b2a6262e13d" type="business"/>
   <folder name="Application" id="id-1c6386b8b28744f3aab2b290b087ffaa" type="application">
     <element xsi:type="archimate:ApplicationProcess" name="Парсинг параметров командной строки" id="id-075b554b8b94430091a25a32585d2e1f"/>
-    <element xsi:type="archimate:ApplicationProcess" name="Создание полного набора параметров" id="id-fb05d4969c094a268324be32add1ddd6"/>
+    <element xsi:type="archimate:ApplicationProcess" name="Создание полного набора параметров отчета" id="id-fb05d4969c094a268324be32add1ddd6"/>
     <element xsi:type="archimate:ApplicationProcess" name="Проверка корректности параметров" id="id-c21a7554b3b340b6a4d2d7b7fd7b6bfa"/>
     <element xsi:type="archimate:ApplicationProcess" name="Создание сценария работы" id="id-2a469c95b91b43439cac6b317d11f9cb"/>
     <element xsi:type="archimate:ApplicationProcess" name="Создание заголовка отчета" id="id-2c737e8eefe443228e04cca610f65096"/>
