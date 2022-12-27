@@ -17,10 +17,10 @@ class CLParser(Worker):
 
     def get_input_namespace(self, parseline):
         '''Распрарсить параметры командной строки и вернуть их словарем'''
-        self.log.debug('Парсинг командной строки начат')
+        self.log.info('Парсинг командной строки начат')
         try:
             namespace = self.parser.parse_args(parseline)
-            self.log.debug('Парсинг командной строки выполнен')
+            self.log.info('Парсинг командной строки выполнен')
             return vars(namespace)
         except Exception as e:
             self.log.error(f'Ошибка парсинга командной строки: {e}')

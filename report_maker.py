@@ -9,7 +9,7 @@ from common.control import ReportMaker
 
 
 def main():
-    report_maker = ReportMaker(sys.argv)
+    report_maker = ReportMaker(sys.argv, log_level='INFO')
     try:
         report_maker.start()
     except Exception:
