@@ -3,14 +3,15 @@
 '''
 
 import argparse
-import logging
 
-class CLParser():
+from common.worker import Worker
+
+class CLParser(Worker):
     '''Парсер параметров командной строки'''
 
-    def __init__(self, *args) -> None:
+    def __init__(self, *args, log_level='DEBUG') -> None:
+        super().__init__(log_level)
         self.cl_params = args
-        self.log = self._get_logger()
         self.parser = self._createParser()
 
     def get_input_namespace(self):
@@ -60,14 +61,6 @@ class CLParser():
 
         return parser
 
-    def _get_logger(self):
-        '''Создание логгера на основе файла настроек'''
-        logging.basicConfig(filename='logs/report.log',
-                    filemode='a',
-                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-                    datefmt='%H:%M:%S',
-                    level=logging.DEBUG)
-        return logging.getLogger('CLParser')
 
 class ParsingCommandLineError(Exception):
     pass

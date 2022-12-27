@@ -1,19 +1,19 @@
 '''
-Модуль содержит классы, управляющие выполнением всех этапов создания отчета
+Модуль содержит классы, управляющие и обеспечивающие выполнение всех этапов создания отчета
 '''
-import logging
-import logging.config
 
+from common.worker import Worker
 from prepare.settings import SettingsProvider
 from prepare.cl_parser import CLParser, ParsingCommandLineError
 
-class ReportMaker():
+
+class ReportMaker(Worker):
     '''Основной класс, отвечающий за управление процессом создания отчета
     Создает все необходимые объекты и выполняет вызовы их методов
     '''
-    def __init__(self, *args) -> None:
+    def __init__(self, *args, log_level = 'DEBUG') -> None:
+        super().__init__(log_level)
         self.cl_params = list(*args)[1:]
-        self.log = self._get_logger()
 
     def start_CL_parser(self):
         self.log.debug(self.cl_params)
@@ -34,21 +34,12 @@ class ReportMaker():
     
     def start(self):
         '''Запуск процесса создания отчета'''
-        self.log.info("***********Start*************")
+        self.log.critical("*****Start*****")
         
         # Start commnan line parser
         self.start_CL_parser()
 
-        
-    def _get_logger(self):
-        '''Создание логгера на основе файла настроек'''
-        logging.basicConfig(filename='logs/report.log',
-                    filemode='w',
-                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-                    datefmt='%H:%M:%S',
-                    level=logging.DEBUG)
-        return logging.getLogger('ReportMaker')
-
 
 class CommandLineParameterMiss(Exception):
     pass
+
