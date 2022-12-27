@@ -6,18 +6,18 @@ import logging
 class Worker():
     '''Базовый класс для всех классов, которые отвечают за выполнение отдельных этапов процесса создания отчета'''
 
-    def __init__(self, log_level = "DEBUG") -> None:
+    def __init__(self, log_level = "ERROR") -> None:
         self.log = self._get_logger(log_level)
 
     def _get_logger(self, log_level):
-        '''Создание логера с уровнем сообщений log_level (по-умолчанию - DEBUG)'''
+        '''Создание логера с уровнем сообщений log_level'''
         formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
         
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.DEBUG)
         console_handler.setFormatter(formatter)
         try:
-            file_handler = logging.FileHandler('logs/report.log')
+            file_handler = logging.FileHandler('logs/report.log',encoding='utf-8')
         except Exception as e:
             print(e)
         file_handler.setLevel(log_level)

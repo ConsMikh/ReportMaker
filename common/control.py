@@ -11,35 +11,26 @@ class ReportMaker(Worker):
     '''Основной класс, отвечающий за управление процессом создания отчета
     Создает все необходимые объекты и выполняет вызовы их методов
     '''
-    def __init__(self, *args, log_level = 'DEBUG') -> None:
+    def __init__(self, *args, log_level = 'ERROR') -> None:
         super().__init__(log_level)
         self.cl_params = list(*args)[1:]
 
     def start_CL_parser(self):
-        self.log.debug(self.cl_params)
-        if self.cl_params:
-            self.log.info("Start command line parsing")
-            cl_parser = CLParser(self.cl_params)
-            try:
-                namespace = cl_parser.get_input_namespace()
-            except ParsingCommandLineError as e:
-                self.log.error(f'Commandline parser error (argparse problem): {e}')
-            else:
-                
-                self.log.info('Finish command line parsing')
-
-        else:
-            self.log.critical("There are not command line parameters")
-            raise CommandLineParameterMiss()
+        '''Создание парсера командной строки и получение словаря параметров командной строки'''
+        self.log.info("Начало парсинга командной строки")
+        cl_parser = CLParser()
+        try:
+            self.namespace = cl_parser.get_input_namespace(self.cl_params)
+            self.log.debug(f"Получены параметры командной строки: {self.namespace}")
+        except ParsingCommandLineError as e:
+            self.log.error(f"Возвращена ошибка из парсера командной строки: {e}")
     
     def start(self):
         '''Запуск процесса создания отчета'''
         self.log.critical("*****Start*****")
-        
-        # Start commnan line parser
         self.start_CL_parser()
+        
 
 
-class CommandLineParameterMiss(Exception):
-    pass
+
 

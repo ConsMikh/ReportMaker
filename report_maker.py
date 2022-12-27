@@ -5,14 +5,14 @@
 '''
 
 import sys
-from common.control import ReportMaker, CommandLineParameterMiss
+from common.control import ReportMaker
 
 
 def main():
     report_maker = ReportMaker(sys.argv)
     try:
         report_maker.start()
-    except CommandLineParameterMiss as e:
+    except Exception:
         print("Отсутствуют параметры командной строки")
 
 if __name__ == "__main__":
