@@ -5,6 +5,7 @@
 from common.worker import Worker
 from prepare.settings import SettingsParser
 from prepare.cl_parser import CLParser, ParsingCommandLineError
+from prepare.task import TaskManager
 
 
 class ReportMaker(Worker):
@@ -14,6 +15,7 @@ class ReportMaker(Worker):
     def __init__(self, *args, log_level = 'ERROR') -> None:
         super().__init__(log_level)
         self.cl_params = list(*args)[1:]
+        self.prog_name = list(*args)[0]
 
     def start_CL_parsing(self):
         '''Создание парсера командной строки и получение словаря параметров командной строки'''
@@ -35,7 +37,11 @@ class ReportMaker(Worker):
             self.log.warning(f'Получена ошибка при выполнении парсинга файла настроек: {e}')
         self.log.debug(f"Получены параметры файла настроек: {self.settings}")
 
-
+    def start_set_task(self):
+        '''Создание задачи для создания отчета'''
+        self.log.info("Создание задачи")
+        task_manager = TaskManager(log_level='INFO')
+        task_manager.set_task_param(settings = self.settings, input = self.namespace, prog_name = self.prog_name)
 
 
     def start(self):
@@ -43,6 +49,7 @@ class ReportMaker(Worker):
         self.log.info("***********Start************")
         self.start_CL_parsing()
         self.start_set_parsing()
+        self.start_set_task()
         
 
 
