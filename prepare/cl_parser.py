@@ -45,7 +45,7 @@ class CLParser(Worker):
 
         entity = subparsers.add_parser('entity')
         entity.add_argument('--type', '-t', choices= ['theme', 'epic', 'project', 'task'], default='theme')
-        entity.add_argument('--entityname', '-e')    
+        entity.add_argument('--entityname', '-e', required = True)    
         entity.add_argument('--startdate', '-s', type=datetime.date.fromisoformat)
         entity.add_argument('--enddate', '-l', type=datetime.date.fromisoformat)
         entity.add_argument('--currentperiod', '-cp')

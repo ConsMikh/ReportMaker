@@ -12,8 +12,8 @@ def main():
     report_maker = ReportMaker(sys.argv, log_level='INFO')
     try:
         report_maker.start()
-    except Exception:
-        print("Отсутствуют параметры командной строки")
+    except Exception as e:
+        print(f"Ошибка выполнения программы: {e}")
 
 if __name__ == "__main__":
     main()
