@@ -2,6 +2,7 @@
 Базовый модуль для всех классов, которые отвечают за выполнение отдельных этапов процесса создания отчета
 '''
 import logging
+import os
 
 class Worker():
     '''Базовый класс для всех классов, которые отвечают за выполнение отдельных этапов процесса создания отчета'''
@@ -16,6 +17,11 @@ class Worker():
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.DEBUG)
         console_handler.setFormatter(formatter)
+
+        if not os.path.exists('logs'):
+            os.makedirs("logs")
+
+
         try:
             file_handler = logging.FileHandler('logs/report.log',encoding='utf-8')
         except Exception as e:

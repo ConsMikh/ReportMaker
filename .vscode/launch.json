@@ -2,7 +2,7 @@
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    // "args" : ["period", "-t", "week", "-t", "theme", "-e", "Уют", "-s", "2022-11-21", "-l","2022-11-27", "-st", "full", "-o", "screen", "-cp", "last", "-y", "2023", "-mn", "june"]
+    // "args" : ["period", "-t", "week", "-t", "theme", "-e", "Уют", "-s", "2022-11-21", "-l","2022-11-27", "-st", "full", "-o", "screen", "-cp", "last", "-y", "2023", "-mn", "jun"]
     // "period", "-t", "week", "-cp", "2"
     "version": "0.2.0",
     "configurations": [
@@ -13,7 +13,7 @@
             "program": "report_maker.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args" : ["period", "-t", "week", "-cp", "53"]
+            "args" : ["entity", "-t", "theme", "-e", "Уют", "-cp", "12","-y", "2020" ]
         },
         {
             "name": "Report Maker without params",

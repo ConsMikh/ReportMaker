@@ -15,6 +15,7 @@ class TaskManager(Worker):
     '''Класс создает задачу и проверяет валидность параметров'''
 
     MONTH_LIST = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec', None]
+    MONTH_NUM = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6, 'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
     MIN_YEAR = 1970
     MAX_YEAR = 9999
     DATE_FORMAT = "%Y-%m-%d"
@@ -65,13 +66,17 @@ class TaskManager(Worker):
         
 
     def _set_start_date(self):
+        # ДОБАВИТЬ ДАТУ ДЛЯ ЦЕЛОГО ГОДА
+        # ДОБАВИТЬ ДАТУ ДЛЯ ПЕРИОДА БЕЗ ДАТ ВООБЩЕ
+        
         '''Функция определяет корректную начальную дату'''
         if self._check_start_date_param() and self._check_end_date_param():
             if self.input.get('startdate'):
                 start = self._get_datetime_format(self.input.get('startdate'))
                 if self.input.get('type') == 'week':
                     delta = datetime.timedelta(calendar.weekday(start.year, start.month, start.day))
-                    if delta > 0 and self.input.get('enddate'):
+                    delta_days = delta.days
+                    if delta_days > 0:
                         self.log.warning(f"Дата {start.strftime(TaskManager.DATE_FORMAT)} не является началом недели. Выставлен ближайший понедельник")
                         start -= delta # Если дата среди недели, то возвращается первый день недели
                 if self.input.get('type') == 'month':
@@ -94,18 +99,38 @@ class TaskManager(Worker):
                 if self._is_int(self.input.get('currentperiod')):
                     if self.input.get('type') == 'week':
                         num_week = int(self.input.get('currentperiod')) - 1
-                        tek_year = datetime.date.today().year
                         if self.input.get('year') == None:
                             year = datetime.date.today().year
                         first_year_day = datetime.date(year,1,1)
                         first_monday = first_year_day - datetime.timedelta(calendar.weekday(first_year_day.year, first_year_day.month, first_year_day.day))
                         return first_monday + datetime.timedelta(num_week*7)
-
-
-        return 'Функция не реализована'
+                    if self.input.get('type') == 'month' or self.input.get('command') in ['entity', 'raw']:
+                        if self.input.get('year') == None:
+                            year = datetime.date.today().year
+                        else:
+                            year = self.input.get('year')
+                        return datetime.date(year, int(self.input.get('currentperiod')), 1)
+            elif self.input.get('monthname'):
+                if self.input.get('year') == None:
+                    year = datetime.date.today().year
+                else:
+                    year = self.input.get('year')
+                return datetime.date(year, TaskManager.MONTH_NUM[self.input.get('monthname')], 1)
 
     def _set_end_date(self):
-        return 'Функция не реализована'
+        if self._check_end_date_param():
+            start = self.task.get('start_date')
+
+            if self.input.get('type') == 'period' or (self.input.get('command') in ['raw', 'entity'] and self.input.get('startdate')):
+                return self.task.get('enddate')
+            if self.input.get('type') == 'week' or self.input.get('currentperiod') in ['week', 'last_week']:
+                return start + datetime.timedelta(6)
+            if self.input.get('type') == 'month' or self.input.get('currentperiod') in ['month', 'last_month'] or self._is_int(self.input.get('currentperiod')):
+                _, days = calendar.monthrange(start.year, start.month)
+                return self.task.get('start_date') + datetime.timedelta(days-1)
+                
+
+
 
     def _set_is_part(self, part):
         '''Определяет наличие/отсутствие раздела в отчета на основе входных параметров'''
@@ -261,7 +286,7 @@ class TaskManager(Worker):
                     raise WrongDatesParameter(f"Неверный номер недели: {self.input.get('currentperiod')}")
 
         if (self.input.get('type') == 'month' or self.input.get('command') in ['entity', 'raw']) and self._is_int(self.input.get('currentperiod')):
-            if self.input.get('currentperiod') < 1 or self.input.get('currentperiod') > 12: 
+            if int(self.input.get('currentperiod')) < 1 or int(self.input.get('currentperiod')) > 12: 
                     self.log.error(f"Неверный номер месяца: {self.input.get('currentperiod')}")
                     raise WrongDatesParameter(f"Неверный номер месяца: {self.input.get('currentperiod')}")
 
@@ -273,11 +298,11 @@ class TaskManager(Worker):
             self.log.error(f"Неверный формат наименования месяца {self.input.get('monthname')}. Должен быть {TaskManager.MONTH_LIST}")
             raise WrongDatesParameter(f"Неверный формат наименования месяца {self.input.get('monthname')}. Должен быть {TaskManager.MONTH_LIST}")
 
-        if self.input.get('year') and not isinstance(self.input.get('year'),int):
+        if self.input.get('year') and not self._is_int(self.input.get('year')):
             self.log.error(f"Неверный формат года {self.input.get('year')}")
             raise WrongDatesParameter(f"Неверный формат года {self.input.get('year')}")
 
-        if isinstance(self.input.get('year'),int) and self.input.get('year') < TaskManager.MIN_YEAR and self.input.get('year') > TaskManager.MAX_YEAR:
+        if self._is_int(self.input.get('year')) and self.input.get('year') < TaskManager.MIN_YEAR and self.input.get('year') > TaskManager.MAX_YEAR:
             self.log.error(f"Неверный диапазон года {self.input.get('year')}. Год должен быть между {TaskManager.MIN_YEAR} и {TaskManager.MAX_YEAR}")
             raise WrongDatesParameter(f"Неверный диапазон года {self.input.get('year')}. Год должен быть между {TaskManager.MIN_YEAR} и {TaskManager.MAX_YEAR}")
         
@@ -357,6 +382,8 @@ class TaskManager(Worker):
         Общие
         - неверный формат даты
         - конечная дата раньше начальной
+        - для отчета period конечная дата должна быть
+        - Для отчетов 'raw' и 'entity', в которых установлена начальная дата, конечная дата должна быть
         '''
         if self.input.get('enddate') and not isinstance(self.input.get('enddate'), datetime.date):
             try:
@@ -375,6 +402,14 @@ class TaskManager(Worker):
             if end < start:
                 self.log.error(f"Конечная дата {end.strftime('%Y-%m-%d')} раньше начальной {start.strftime('%Y-%m-%d')}")
                 raise WrongDatesParameter(f"Конечная дата {end.strftime('%Y-%m-%d')} раньше начальной {start.strftime('%Y-%m-%d')}")
+
+        elif self.input.get('type') == 'period' and not self.input.get('enddate'):
+            self.log.error(f"В отчете типа period должна быть конечная дата")
+            raise WrongDatesParameter(f"В отчете типа period должна быть конечная дата")
+
+        elif self.input.get('command') in ['raw', 'entity'] and self.input.get('startdate') and not self.input.get('enddate'):
+            self.log.error(f"Для отчетов 'raw' и 'entity', в которых установлена начальная дата, конечная дата должна быть")
+            raise WrongDatesParameter(f"Для отчетов 'raw' и 'entity', в которых установлена начальная дата, конечная дата должна быть")
         return True
         
     def _get_datetime_format(self, date):
@@ -389,12 +424,14 @@ class TaskManager(Worker):
         return date
         
     def _is_int(self, num):
+        if num == None:
+            return False
         if not isinstance(num, int):
             try:
                 int(num)
                 return True
             except Exception as e:
-                self.log.error("Не является целым числом: {num}")
+                self.log.error(f"Не является целым числом: {num}")
                 return False
         else:
             return True
