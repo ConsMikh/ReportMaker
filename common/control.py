@@ -24,7 +24,7 @@ class ReportMaker(Worker):
         try:
             self.namespace = cl_parser.get_input_namespace(self.cl_params)
             self.log.debug(f"****************INPUT*********************")
-            self.log.debug(f"Получены параметры командной строки: {self.namespace}")
+            self.log.debug(f"{self.namespace}")
             self.log.debug(f"*****************************************")   
         except ParsingCommandLineError as e:
             self.log.error(f"Возвращена ошибка из парсера командной строки: {e}")
@@ -36,7 +36,7 @@ class ReportMaker(Worker):
         try:
             self.settings = set_parser.get_settings_namespace()
             self.log.debug(f"****************SETTINGS*********************")
-            self.log.debug(f"Получены параметры файла настроек: {self.settings}")
+            self.log.debug(f"{self.settings}")
             self.log.debug(f"*****************************************")   
         except Exception as e:
             self.log.warning(f'Получена ошибка при выполнении парсинга файла настроек: {e}')
@@ -47,11 +47,13 @@ class ReportMaker(Worker):
         self.log.info("Создание задачи")
         task_manager = TaskManager(log_level='INFO')
         try:
-            task_manager.set_task_param(settings = self.settings, input = self.namespace, prog_name = self.prog_name)
+            task_manager.set_task_param(task_input = {
+                'settings': self.settings,
+                'input': self.namespace
+            }, prog_name = self.prog_name)
             self.log.debug(f"****************TASK*********************")
-            self.log.debug(f"Получены параметры файла настроек: {self.settings}")
+            self.log.debug(f"{task_manager.task}")
             self.log.debug(f"*****************************************")        
-            self.log.debug(f"Сформирована задача: {task_manager.task}")
         except WrongDatesParameter as e:
             self.log.critical('Завершение работы из-за некорректных входных данных')
             raise Exception(f'Завершение работы из-за некорректных входных данных: {e}')

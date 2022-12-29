@@ -58,6 +58,7 @@ class CLParser(Worker):
         raw = subparsers.add_parser('raw')
         raw.add_argument('--currentperiod', '-cp')
         raw.add_argument('--monthname', '-mn')
+        raw.add_argument('--year', '-y', type=int)
         raw.add_argument('--reportpath', '-rp', type=pathlib.Path)
 
         self.log.debug('Парсер командной строки создан')
