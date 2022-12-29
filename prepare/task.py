@@ -208,7 +208,7 @@ class TaskManager(Worker):
         Общие
         - неверный формат даты
         - в currentperiod что-то кроме
-            week 'last' или от 1 до 52
+            week 'last' или от 1 до 53
             month:'last' или от 1 до 12
             entity/raw: 'last week/week/last month/month' или от 1 до 12
         - в monthname не имя месяца
@@ -255,8 +255,8 @@ class TaskManager(Worker):
             self.log.error(f"Неверный формат относительного периода {self.input.get('currentperiod')}")
             raise WrongDatesParameter(f"Неверный формат относительного периода {self.input.get('currentperiod')}")
 
-        if self.input.get('type') == 'week' and isinstance(self.input.get('currentperiod'),int):
-            if self.input.get('currentperiod') < 1 or self.input.get('currentperiod') > 52: 
+        if self.input.get('type') == 'week' and self._is_int(self.input.get('currentperiod')):
+            if self.input.get('currentperiod') < 1 or self.input.get('currentperiod') > 53: 
                     self.log.error(f"Неверный номер недели: {self.input.get('currentperiod')}")
                     raise WrongDatesParameter(f"Неверный номер недели: {self.input.get('currentperiod')}")
 
