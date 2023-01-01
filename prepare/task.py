@@ -7,7 +7,10 @@ import calendar
 from common.worker import Worker
 
 
-class WrongDatesParameter(Exception):
+class WrongInputParameter(Exception):
+    pass
+
+class WrongTaskParameter(Exception):
     pass
 
 
@@ -22,40 +25,80 @@ class TaskManager(Worker):
 
     def __init__(self, log_level="ERROR") -> None:
         super().__init__(log_level)
-        self.task = {}
+        self._task = {}
 
     def set_task_param(self, task_input, prog_name):
         '''Установка известных параметров'''
         self.settings = task_input['settings']
         self.input = task_input['input']
         self.log.debug("Установка известных параметров")
-        self.task['report_date'] = datetime.datetime.today().strftime("%d-%m-%Y %H:%M")
-        self.task['report_maker'] = prog_name
-        self.task['report_type'] = self.input.get('command')
-        self.task['entity_type'] = self.input.get('type')
-        self.task['output'] = self.input.get('output')
-        self.task['daily_path'] = self.settings.get('path',{}).get('daily_base')
-        self.task['kbase_path'] = self.settings.get('path',{}).get('kbase')
-        self.task['raw_path'] = self.settings.get('path',{}).get('raw_path')
-
-        # self.task['report_time_type'] = self._set_report_time_type() # Решил, что это ненужное свойство
-        self.task['entity_name'] = self._set_entity_name()
-        self.task['start_date'] = self._set_start_date()
-        self.task['end_date'] = self._set_end_date()
-        self.task['is_title'] = self._set_is_part('title')
-        self.task['is_period'] = self._set_is_part('period')
-        self.task['is_aggregated'] = self._set_is_part('aggregated')
-        self.task['aggregated_size'] = self._set_is_part('aggregated_size')
-        self.task['is_detailed'] = self._set_is_part('detailed')
-        self.task['is_links'] = self._set_is_part('links')
-        self.task['links_size'] = self._set_is_part('links_size')
-        self.task['is_source'] = self._set_is_part('source')
-        self.task['is_footer'] = self._set_is_part('footer')
-        self.task['is_raw'] = self._set_is_part('raw')                
-        self.task['output_path'] = self._set_output_path()
-        self.task['norma'] = self._set_norma()        
+        self._task['report_date'] = datetime.datetime.today().strftime("%d-%m-%Y %H:%M")
+        self._task['report_maker'] = prog_name
+        self._task['report_type'] = self.input.get('command')
+        self._task['entity_type'] = self.input.get('type')
+        self._task['output'] = self.input.get('output')
+        self._task['daily_path'] = self.settings.get('path',{}).get('daily_base')
+        self._task['kbase_path'] = self.settings.get('path',{}).get('kbase')
+        self._task['raw_path'] = self.settings.get('path',{}).get('raw_path')
+        self._task['entity_name'] = self._set_entity_name()
+        self._task['start_date'] = self._set_start_date()
+        self._task['end_date'] = self._set_end_date()
+        self._task['is_title'] = self._set_is_part('title')
+        self._task['is_period'] = self._set_is_part('period')
+        self._task['is_aggregated'] = self._set_is_part('aggregated')
+        self._task['aggregated_size'] = self._set_is_part('aggregated_size')
+        self._task['is_detailed'] = self._set_is_part('detailed')
+        self._task['is_links'] = self._set_is_part('links')
+        self._task['links_size'] = self._set_is_part('links_size')
+        self._task['is_source'] = self._set_is_part('source')
+        self._task['is_footer'] = self._set_is_part('footer')
+        self._task['is_raw'] = self._set_is_part('raw')                
+        self._task['output_path'] = self._set_output_path()
+        self._task['norma'] = self._set_norma()        
              
         self.log.debug('Установка известных параметров завершена')
+
+    def check_task(self):
+        list_keys = [
+            'report_date',
+            'report_maker',
+            'report_type',
+            'entity_type',
+            'output',
+            'daily_path',
+            'kbase_path',
+            'raw_path',
+            'entity_name',
+            'start_date',
+            'end_date',
+            'is_title',
+            'is_period',
+            'is_aggregated',
+            'aggregated_size',
+            'is_detailed',
+            'is_links',
+            'links_size',
+            'is_source',
+            'is_footer',
+            'is_raw',
+            'output_path',
+            'norma'
+            ]
+
+        for key in list_keys:
+            if self._task.get(key) is None:
+                self.log.error(f"Отсутствует параметр задачи: {key}")
+                raise WrongTaskParameter(f"Отсутствует параметр задачи: {key}")
+        return True
+
+    @property
+    def task(self):
+        return self._task
+
+    @task.setter
+    def task(self, value):
+        if isinstance(value ,dict) and self.check_task():
+            self._task = value
 
     def _set_entity_name(self):
         '''Возвращает название сущности из входных параметров'''
@@ -63,12 +106,8 @@ class TaskManager(Worker):
             return self.input['entityname']
         else:
             return False
-        
 
     def _set_start_date(self):
-        # ДОБАВИТЬ ДАТУ ДЛЯ ЦЕЛОГО ГОДА
-        # ДОБАВИТЬ ДАТУ ДЛЯ ПЕРИОДА БЕЗ ДАТ ВООБЩЕ
-        
         '''Функция определяет корректную начальную дату'''
         if self._check_start_date_param() and self._check_end_date_param():
             if self.input.get('startdate'):
@@ -115,23 +154,27 @@ class TaskManager(Worker):
                     year = datetime.date.today().year
                 else:
                     year = self.input.get('year')
-                return datetime.date(year, TaskManager.MONTH_NUM[self.input.get('monthname')], 1)
+                return datetime.date(int(year), TaskManager.MONTH_NUM[self.input.get('monthname')], 1)
+            elif self.input.get('year') and not (self.input.get('startdate') or self.input.get('currentperiod') or self.input.get('monthname')):
+                return datetime.date(int(self.input.get('year')),1, 1)
+            elif not (self.input.get('startdate') or self.input.get('currentperiod') or self.input.get('monthname') or self.input.get('year')):
+                return datetime.date(TaskManager.MIN_YEAR,1, 1)
 
     def _set_end_date(self):
         if self._check_end_date_param():
-            start = self.task.get('start_date')
-
+            start = self._task.get('start_date')
+            if start == datetime.date(TaskManager.MIN_YEAR,1,1):
+                return datetime.date(TaskManager.MAX_YEAR,12,31)
             if self.input.get('type') == 'period' or (self.input.get('command') in ['raw', 'entity'] and self.input.get('startdate')):
-                return self.task.get('enddate')
+                return self._task.get('enddate')
             if self.input.get('type') == 'week' or self.input.get('currentperiod') in ['week', 'last_week']:
                 return start + datetime.timedelta(6)
             if self.input.get('type') == 'month' or self.input.get('currentperiod') in ['month', 'last_month'] or self._is_int(self.input.get('currentperiod')):
                 _, days = calendar.monthrange(start.year, start.month)
-                return self.task.get('start_date') + datetime.timedelta(days-1)
-                
-
-
-
+                return self._task.get('start_date') + datetime.timedelta(days-1)
+            if self.input.get('year') and not (self.input.get('startdate') or self.input.get('currentperiod') or self.input.get('monthname')):
+                return datetime.date(int(self.input.get('year')),12,31)
+            
     def _set_is_part(self, part):
         '''Определяет наличие/отсутствие раздела в отчета на основе входных параметров'''
         part_map = {
@@ -258,7 +301,6 @@ class TaskManager(Worker):
         - есть currentperiod == 'last' и есть year
 
         type: entity (theme/epic/project/task)
-        - нет startdate и нет (currentperiod или monthname или year)
         - есть startdate и (currentperiod или monthname или year)
         - есть currentperiod и monthname
         - есть currentperiod == 'last week/week/last month/ month' и есть monthname или year
@@ -302,9 +344,11 @@ class TaskManager(Worker):
             self.log.error(f"Неверный формат года {self.input.get('year')}")
             raise WrongDatesParameter(f"Неверный формат года {self.input.get('year')}")
 
-        if self._is_int(self.input.get('year')) and self.input.get('year') < TaskManager.MIN_YEAR and self.input.get('year') > TaskManager.MAX_YEAR:
-            self.log.error(f"Неверный диапазон года {self.input.get('year')}. Год должен быть между {TaskManager.MIN_YEAR} и {TaskManager.MAX_YEAR}")
-            raise WrongDatesParameter(f"Неверный диапазон года {self.input.get('year')}. Год должен быть между {TaskManager.MIN_YEAR} и {TaskManager.MAX_YEAR}")
+        if self._is_int(self.input.get('year')):
+            year = int(self.input.get('year'))
+            if year < TaskManager.MIN_YEAR or year > TaskManager.MAX_YEAR:
+                self.log.error(f"Неверный диапазон года {self.input.get('year')}. Год должен быть между {TaskManager.MIN_YEAR} и {TaskManager.MAX_YEAR}")
+                raise WrongDatesParameter(f"Неверный диапазон года {self.input.get('year')}. Год должен быть между {TaskManager.MIN_YEAR} и {TaskManager.MAX_YEAR}")
         
         if self.input.get('type') == 'period':
             if self.input.get('currentperiod', False) or self.input.get('monthname', False) or self.input.get('year', False):
@@ -347,10 +391,10 @@ class TaskManager(Worker):
             return True
 
         if self.input.get('command') == 'entity':
-            if not self.input.get('startdate', False) and not (self.input.get('currentperiod', False) or self.input.get('monthname', False) or self.input.get('year', False)):
-                self.log.error(f"В отчете типа {self.input['type']} должен быть задан один из параметров: начальная дата (параметр --startdate, -s) либо относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
-                raise WrongDatesParameter(f"В отчете типа {self.input['type']} должен быть задан один из параметров: начальная дата (параметр --startdate, -s) либо относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
-            elif self.input.get('startdate', False) and (self.input.get('currentperiod', False) or self.input.get('monthname', False) or self.input.get('year', False)):
+            # # if not self.input.get('startdate', False) and not (self.input.get('currentperiod', False) or self.input.get('monthname', False) or self.input.get('year', False)):
+            # #     self.log.error(f"В отчете типа {self.input['type']} должен быть задан один из параметров: начальная дата (параметр --startdate, -s) либо относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
+            #     raise WrongDatesParameter(f"В отчете типа {self.input['type']} должен быть задан один из параметров: начальная дата (параметр --startdate, -s) либо относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
+            if self.input.get('startdate', False) and (self.input.get('currentperiod', False) or self.input.get('monthname', False) or self.input.get('year', False)):
                 self.log.error(f"В отчете типа {self.input['type']} должен быть задан один из параметров: начальная дата (параметр --startdate, -s) либо относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
                 raise WrongDatesParameter(f"В отчете типа {self.input['type']} должен быть задан один из параметров: начальная дата (параметр --startdate, -s) либо относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
             elif self.input.get('currentperiod', False) and self.input.get('monthname', False):
