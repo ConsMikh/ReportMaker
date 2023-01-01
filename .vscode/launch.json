@@ -13,7 +13,7 @@
             "program": "report_maker.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args" : ["entity", "-t", "theme", "-e", "Уют", "-cp", "12","-y", "2020" ]
+            "args" : ["entity", "-t", "theme", "-e", "Уют"]
         },
         {
             "name": "Report Maker without params",
