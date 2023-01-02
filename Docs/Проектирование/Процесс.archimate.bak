@@ -35,14 +35,14 @@
     <element xsi:type="archimate:ApplicationProcess" name="Ведение лога выполнения" id="id-9efa6d87433f44b3bfd46fb0c71cac02"/>
     <element xsi:type="archimate:ApplicationComponent" name="ReportManager" id="id-a9e2bab3851846b9b28d9336ceb86905"/>
     <element xsi:type="archimate:ApplicationComponent" name="Logger" id="id-4a047705c26a44f5aee454acbb48172e"/>
-    <element xsi:type="archimate:ApplicationComponent" name="SettingProvider" id="id-1da9c5f0cb8b4dd6b575a44ecc13e3f5"/>
+    <element xsi:type="archimate:ApplicationComponent" name="SettingsParser" id="id-1da9c5f0cb8b4dd6b575a44ecc13e3f5"/>
     <element xsi:type="archimate:ApplicationComponent" name="CLParser" id="id-97155d2be4b04d8bbc2867910a1bda84"/>
     <element xsi:type="archimate:ApplicationComponent" name="argparse" id="id-f5414ed7cfa147d397add1ecb6842fdc"/>
     <element xsi:type="archimate:ApplicationComponent" name="TaskManager" id="id-41eef4ae330347f5995e89c899226ad5"/>
     <element xsi:type="archimate:DataObject" name="Input" id="id-d9ec7dbb218b47efb62e47d312467142"/>
     <element xsi:type="archimate:DataObject" name="Task" id="id-03e11359c48a437eace2497870c0ee2a"/>
     <element xsi:type="archimate:ApplicationComponent" name="ScenarioMaker" id="id-406f57e974f74f3a8d5f874d2344f73d"/>
-    <element xsi:type="archimate:ApplicationComponent" name="configparser" id="id-4de1a59313e242f8b0caa475b782b0ac"/>
+    <element xsi:type="archimate:ApplicationComponent" name="json" id="id-4de1a59313e242f8b0caa475b782b0ac"/>
     <element xsi:type="archimate:DataObject" name="Scenario" id="id-daa5b20702be448cbb6cdeb46ae5e544"/>
     <element xsi:type="archimate:DataObject" name="settings" id="id-87fb5d5137d24581abfc9955fe4cd2c6"/>
   </folder>
@@ -312,7 +312,7 @@
         <sourceConnection xsi:type="archimate:Connection" id="id-e4d3c6f768584e489b94282da4b420e4" source="id-18191d19d803435689e904e514a70eb5" target="id-9b69ac146566494bb01f5dfa9c00939a" archimateRelationship="id-4eb8df9b426147398eb005b0a2bc5bef"/>
       </child>
       <child xsi:type="archimate:DiagramObject" id="id-1c59a4900a404adc9bfc74a82ab8e110" archimateElement="id-4a047705c26a44f5aee454acbb48172e">
-        <bounds x="132" y="636" width="120" height="55"/>
+        <bounds x="36" y="636" width="120" height="55"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-765e010575e84b23b18f6da77312d218" source="id-1c59a4900a404adc9bfc74a82ab8e110" target="id-fb4b90281ca244a6a8d1c82af62d1d54" archimateRelationship="id-5beed7c4e9cb4861b765fe45df4dc929"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-abaf0712cba14df9a777356c85d52751" source="id-1c59a4900a404adc9bfc74a82ab8e110" target="id-5d84172f28bc4319ad100aece092d05c" archimateRelationship="id-945293b71275450b9744d3702aa64d98"/>
       </child>

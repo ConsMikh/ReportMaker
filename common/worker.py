@@ -35,3 +35,15 @@ class Worker():
         logger.addHandler(console_handler)
 
         return logger
+
+
+class PartMaker(Worker):
+    '''Базовый класс для всех классов, непосредственно формирующих отчет'''
+
+    def __init__(self, task, report, log_level="ERROR") -> None:
+        super().__init__(log_level)
+        self.task = task
+        self.report = report
+
+    def process(self):
+        self.log.warning("Часть не реализована")

@@ -17,8 +17,9 @@ class ReportMaker(Worker):
         super().__init__(log_level)
         self.cl_params = list(*args)[1:]
         self.prog_name = list(*args)[0]
+        self.report = {}
 
-    def start_CL_parsing(self):
+    def command_line_parsing(self):
         '''Создание парсера командной строки и получение словаря параметров командной строки'''
         self.log.info("Парсинг командной строки")
         cl_parser = CLParser(log_level='INFO')
@@ -30,7 +31,7 @@ class ReportMaker(Worker):
         except ParsingCommandLineError as e:
             self.log.error(f"Возвращена ошибка из парсера командной строки: {e}")
 
-    def start_set_parsing(self):
+    def settings_file_parsing(self):
         '''Парсинг файла настроек'''
         self.log.info("Парсинг файла настроек")
         set_parser = SettingsParser(log_level='INFO')
@@ -42,7 +43,7 @@ class ReportMaker(Worker):
         except Exception as e:
             self.log.warning(f'Получена ошибка при выполнении парсинга файла настроек: {e}')
 
-    def start_set_task(self):
+    def make_task(self):
         '''Создание задачи для создания отчета'''
         self.log.info("Создание задачи")
         task_manager = TaskManager(log_level='INFO')
@@ -64,14 +65,14 @@ class ReportMaker(Worker):
             raise Exception(f'Завершение работы из-за некорректных параметров задачи: {e}')        
         self.log.info("Задача создана")
 
-    def start_set_scenario(self):
+    def make_scenario(self):
         '''Создание сценария формирования отчета'''
         self.log.info("Создание сценария формирования отчета")
         scenario_manager = ScenarioManager(log_level='INFO')
         try:
-            self.settings = scenario_manager.create_scenario(self.task)
+            self.scenario = scenario_manager.create_scenario(self.task)
             self.log.debug(f"***************SCENARIO******************")
-            self.log.debug(f"{scenario_manager.scenario}")
+            self.log.debug(f"{list(scenario_manager.scenario)}")
             self.log.debug(f"*****************************************")   
         except Exception as e:
             self.log.warning(f'Получена ошибка при создании сценария формирования отчета: {e}')
@@ -80,10 +81,14 @@ class ReportMaker(Worker):
     def start(self):
         '''Запуск процесса создания отчета'''
         self.log.info("***********Start************")
-        self.start_CL_parsing()
-        self.start_set_parsing()
-        self.start_set_task()
-        self.start_set_scenario()
+        self.command_line_parsing()
+        self.settings_file_parsing()
+        self.make_task()
+        self.make_scenario()
+        for ind, part in enumerate(self.scenario):
+            self.log.info(f"****************STEP {ind+1}*********************")
+            part_worker = part(self.task, self.report)
+            part_worker.process()
         
 
 

@@ -1,11 +1,18 @@
 '''Модуль содержит классы для создания сценария формирования отчета'''
 
 from common.control import Worker
+from report.etl import ETLManager
+
 from collections import deque
 
 
 class ScenarioManager(Worker):
-    
+
+    SCENARIO_ACTORS = {
+        'raw': ETLManager
+    }
+
+
     def __init__(self, log_level="ERROR") -> None:
         super().__init__(log_level)
         self._scenario = deque()
@@ -23,7 +30,11 @@ class ScenarioManager(Worker):
 
     def create_scenario(self, task):
         self.log.debug(f"Формирование сценария")
-        self._scenario.append('Step 1')
-        self._scenario.append('Step 2')
-        self._scenario.append('Step 3')
+        self._task = task
+        self._create_etl_part()
         self.log.debug(f"Сценарий сформирован")
+        return self._scenario
+
+    def _create_etl_part(self):
+        if self._task.get('is_raw', False):
+            self._scenario.append(ScenarioManager.SCENARIO_ACTORS['raw'])
