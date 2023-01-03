@@ -19,8 +19,8 @@ class TaskManager(Worker):
 
     MONTH_LIST = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec', None]
     MONTH_NUM = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6, 'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
-    MIN_YEAR = 1970
-    MAX_YEAR = 9999
+    MIN_YEAR = 1990
+    MAX_YEAR = 2100
     DATE_FORMAT = "%Y-%m-%d"
 
     def __init__(self, log_level="ERROR") -> None:
