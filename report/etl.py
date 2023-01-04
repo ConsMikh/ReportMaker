@@ -34,7 +34,7 @@ class ETLManager(PartMaker):
         for single_date in self.daterange(self.task.get('start_date'), self.task.get('end_date')):
             file =  single_date.strftime('%Y-%m-%d')+'.md'
             extract_block = self.extractor.parseFile(path, file)
-            self._data += self.transformer.transform(single_date.strftime('%Y-%m-%d'), extract_block)
+            self._data += self.transformer.transform(single_date.strftime('%Y-%m-%d'), extract_block[1:], file_exist = extract_block[0])
         self.loader.dataframe_load(self._data)
         self.report['dataframe'] = self.loader.dataframe
         self.log.info("Конец ETL")
@@ -52,15 +52,15 @@ class Extractor(Worker):
         - несколько тегов о помидороках в файле
         '''
         try:
-            self.log.debug(f"{file}- обработка")
+            # self.log.debug(f"{file}- обработка")
             with open(os.path.join(path,file), encoding='utf8') as f:
                 filedata = f.readlines()
-                self.log.debug(f"{os.path.join(path,file)} прочитан")
+                # self.log.debug(f"{os.path.join(path,file)} прочитан")
         except Exception as e:
-            self.log.debug(f"{os.path.join(path,file)} {e}")
-            return ['0']
+            # self.log.debug(f"{os.path.join(path,file)} {e}")
+            return [False, '0']
 
-        pomidors = []
+        pomidors = [True]
         pomidor_flag = False
         for line in filedata:
             if ('#' in line) & pomidor_flag:
@@ -82,12 +82,12 @@ class Transformer(Worker):
     - нет количества помидорок вообще
     - количество помидорок не числом и не +
     '''
-    def transform(self, date, block):
+    def transform(self, date, block, file_exist):
         transform_block = []
         for line in block:
             # self.log.debug(f"Запись для анализа {line}")
             line_parts = line.split(':')
-            pom_rec = [date]
+            pom_rec = [date, file_exist]
             timespend = line_parts[-1]
             for ind, part in enumerate(line_parts):
                 if (part != timespend):
@@ -100,7 +100,7 @@ class Transformer(Worker):
                 timespend = timespend.count('+')
             pom_rec.append(int(timespend))
             transform_block.append(tuple(pom_rec))
-        self.log.debug(f"Трансформированный блок {transform_block}")
+        # self.log.debug(f"Трансформированный блок {transform_block}")
         return transform_block 
 
 
@@ -112,8 +112,8 @@ class Loader(Worker):
     
     def dataframe_load(self, data):
         
-        self._dataframe = pd.DataFrame.from_records(data, columns=['date', 'theme', 'epic', 'project','task', 'pom_num'])
-        self.log.debug(f"Dataframe {self._dataframe.head}")
+        self._dataframe = pd.DataFrame.from_records(data, columns=['date', 'file_exist', 'theme', 'epic', 'project','task', 'pom_num'])
+        # self.log.debug(f"Dataframe {self._dataframe.head}")
         # dataframe.to_csv('Docs\\Base\\Reports\\raw\\report.csv', index=False)
 
     @property

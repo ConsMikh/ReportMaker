@@ -19,9 +19,8 @@ class TaskManager(Worker):
 
     MONTH_LIST = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec', None]
     MONTH_NUM = {'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6, 'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12}
-    MIN_YEAR = 1990
-    MAX_YEAR = 2100
-    DATE_FORMAT = "%Y-%m-%d"
+
+    DATE_FORMAT = '%Y-%m-%d'
 
     def __init__(self, log_level="ERROR") -> None:
         super().__init__(log_level)
@@ -54,7 +53,9 @@ class TaskManager(Worker):
         self._task['is_footer'] = self._set_is_part('footer')
         self._task['is_raw'] = self._set_is_part('raw')                
         self._task['output_path'] = self._set_output_path()
-        self._task['norma'] = self._set_norma()        
+        self._task['norma'] = self._set_norma()
+        self._task['min_year'] = self.settings.get('analyst', {}).get('min_year', 2010)
+        self._task['max_year'] = self.settings.get('analyst', {}).get('max_year', 2100)         
              
         self.log.debug('Установка известных параметров завершена')
 
@@ -158,13 +159,13 @@ class TaskManager(Worker):
             elif self.input.get('year') and not (self.input.get('startdate') or self.input.get('currentperiod') or self.input.get('monthname')):
                 return datetime.date(int(self.input.get('year')),1, 1)
             elif not (self.input.get('startdate') or self.input.get('currentperiod') or self.input.get('monthname') or self.input.get('year')):
-                return datetime.date(TaskManager.MIN_YEAR,1, 1)
+                return datetime.date(self.settings['analyst']['min_year'],1, 1)
 
     def _set_end_date(self):
         if self._check_end_date_param():
             start = self._task.get('start_date')
-            if start == datetime.date(TaskManager.MIN_YEAR,1,1):
-                return datetime.date(TaskManager.MAX_YEAR,12,31)
+            if start == datetime.date(int(self.settings['analyst']['min_year']),1,1):
+                return datetime.date(int(self.settings['analyst']['max_year']),12,31)
             if self.input.get('type') == 'period' or (self.input.get('command') in ['raw', 'entity'] and self.input.get('startdate')):
                 return self._task.get('enddate')
             if self.input.get('type') == 'week' or self.input.get('currentperiod') in ['week', 'last_week']:
@@ -346,9 +347,9 @@ class TaskManager(Worker):
 
         if self._is_int(self.input.get('year')):
             year = int(self.input.get('year'))
-            if year < TaskManager.MIN_YEAR or year > TaskManager.MAX_YEAR:
-                self.log.error(f"Неверный диапазон года {self.input.get('year')}. Год должен быть между {TaskManager.MIN_YEAR} и {TaskManager.MAX_YEAR}")
-                raise WrongDatesParameter(f"Неверный диапазон года {self.input.get('year')}. Год должен быть между {TaskManager.MIN_YEAR} и {TaskManager.MAX_YEAR}")
+            if year < int(self.settings['analyst']['min_year']) or year > int(self.settings['analyst']['max_year']):
+                self.log.error(f"Неверный диапазон года {self.input.get('year')}. Год должен быть между {int(self.settings['analyst']['min_year'])} и {int(self.settings['analyst']['max_year'])}")
+                raise WrongDatesParameter(f"Неверный диапазон года {self.input.get('year')}. Год должен быть между {int(self.settings['analyst']['min_year'])} и {int(self.settings['analyst']['max_year'])}")
         
         if self.input.get('type') == 'period':
             if self.input.get('currentperiod', False) or self.input.get('monthname', False) or self.input.get('year', False):

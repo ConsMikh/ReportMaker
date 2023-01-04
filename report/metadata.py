@@ -8,6 +8,7 @@ from common.worker import PartMaker
 class MetadataPartMaker(PartMaker):
 
     def process(self):
+        self.log.info(f"Формирование метадаты")
         self.report['metadata'] = {}
         self._copy_task()
         self.report['entity'] = {}
@@ -15,6 +16,7 @@ class MetadataPartMaker(PartMaker):
             self._set_entity_report_for_period()
         elif self.task.get('report_type') == 'entity':
             self._set_entity_report_for_entity()
+        self.log.info(f"Формирование метадаты завершено")
 
     def _copy_task(self):
         self.report['metadata']['report_date'] = self.task.get('report_date')

@@ -8,6 +8,8 @@
         "raw_path":"Docs/Base/Reports/raw"
     },
     "analyst":{
-        "norma": 14
+        "norma": 14,
+        "max_year": 2100,
+        "min_year": 2010
     }
 }

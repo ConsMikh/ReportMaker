@@ -3,6 +3,7 @@
 from common.control import Worker
 from report.etl import ETLManager
 from report.metadata import MetadataPartMaker
+from report.period import PeriodPartMaker
 
 from collections import deque
 
@@ -11,7 +12,8 @@ class ScenarioManager(Worker):
 
     SCENARIO_ACTORS = {
         'raw': ETLManager,
-        'metadata': MetadataPartMaker
+        'metadata': MetadataPartMaker,
+        'period': PeriodPartMaker
     }
 
 
@@ -35,6 +37,7 @@ class ScenarioManager(Worker):
         self._task = task
         self._create_etl_part()
         self._create_metadata_part()
+        self._create_period_part()
         self.log.debug(f"Сценарий сформирован")
         return self._scenario
 
@@ -44,3 +47,6 @@ class ScenarioManager(Worker):
 
     def _create_metadata_part(self):
         self._scenario.append(ScenarioManager.SCENARIO_ACTORS['metadata'])
+
+    def _create_period_part(self):
+        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['period'])   
