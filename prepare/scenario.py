@@ -2,6 +2,7 @@
 
 from common.control import Worker
 from report.etl import ETLManager
+from report.metadata import MetadataPartMaker
 
 from collections import deque
 
@@ -9,7 +10,8 @@ from collections import deque
 class ScenarioManager(Worker):
 
     SCENARIO_ACTORS = {
-        'raw': ETLManager
+        'raw': ETLManager,
+        'metadata': MetadataPartMaker
     }
 
 
@@ -32,9 +34,13 @@ class ScenarioManager(Worker):
         self.log.debug(f"Формирование сценария")
         self._task = task
         self._create_etl_part()
+        self._create_metadata_part()
         self.log.debug(f"Сценарий сформирован")
         return self._scenario
 
     def _create_etl_part(self):
         if self._task.get('is_raw', False):
             self._scenario.append(ScenarioManager.SCENARIO_ACTORS['raw'])
+
+    def _create_metadata_part(self):
+        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['metadata'])

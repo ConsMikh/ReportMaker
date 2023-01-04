@@ -10,7 +10,10 @@ from common.worker import PartMaker, Worker
 from datetime import date, timedelta
 
 class ETLManager(PartMaker):
-
+    '''
+    Класс, обеспечивает процесс извлечения, преобразования и загрузки в датафрейм всех записей о помидорках
+    в файлах в указанном диапазоне
+    '''
     def __init__(self, task, report, log_level="ERROR") -> None:
         super().__init__(task, report, log_level)
         self._data=[]
@@ -19,6 +22,7 @@ class ETLManager(PartMaker):
         self.loader = Loader()
 
     def daterange(self, start_date, end_date):
+        '''Генератор для создания полного перечня дат в интересующем диапазоне'''
         for n in range(int((end_date - start_date).days)+1):
             yield start_date + timedelta(n)
     
@@ -32,12 +36,21 @@ class ETLManager(PartMaker):
             extract_block = self.extractor.parseFile(path, file)
             self._data += self.transformer.transform(single_date.strftime('%Y-%m-%d'), extract_block)
         self.loader.dataframe_load(self._data)
+        self.report['dataframe'] = self.loader.dataframe
         self.log.info("Конец ETL")
 
 
 class Extractor(Worker):
-
+    '''Класс для извлечения записей о помидорках из файлов
+    '''
     def parseFile(self, path, file):
+        '''Открывает файл. Находит записи о помидорках в файле.
+        Если файла нет, возвращает ['0']
+        
+        Возможные ошибки:
+        - нет тега о помидорках в файле
+        - несколько тегов о помидороках в файле
+        '''
         try:
             self.log.debug(f"{file}- обработка")
             with open(os.path.join(path,file), encoding='utf8') as f:
@@ -60,7 +73,15 @@ class Extractor(Worker):
 
 
 class Transformer(Worker):
+    '''Преобразует записи о помидорках из файла в список кортежей
     
+    Возможные ошибки:
+    - неверный формат записи
+    - неправильные разделители
+    - неправильное количество блоков
+    - нет количества помидорок вообще
+    - количество помидорок не числом и не +
+    '''
     def transform(self, date, block):
         transform_block = []
         for line in block:
@@ -85,9 +106,17 @@ class Transformer(Worker):
 
 class Loader(Worker):
 
+    def __init__(self, log_level="ERROR") -> None:
+        super().__init__(log_level)
+        self._dataframe = pd.DataFrame()
+    
     def dataframe_load(self, data):
         
-        dataframe = pd.DataFrame.from_records(data, columns=['date', 'theme', 'epic', 'project','task', 'pom_num'])
-        self.log.debug(f"Dataframe {dataframe.head}")
+        self._dataframe = pd.DataFrame.from_records(data, columns=['date', 'theme', 'epic', 'project','task', 'pom_num'])
+        self.log.debug(f"Dataframe {self._dataframe.head}")
         # dataframe.to_csv('Docs\\Base\\Reports\\raw\\report.csv', index=False)
+
+    @property
+    def dataframe(self):
+        return self._dataframe
 

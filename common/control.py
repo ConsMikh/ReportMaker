@@ -92,6 +92,10 @@ class ReportMaker(Worker):
                 part_worker.process()
             except Exception as e:
                 self.log.error(f"При выполнении {part_worker.__class__.__name__} произошла ошибка: {e}")
+
+        self.log.info(f"****************REPORT*********************")
+        self.log.info(f"{self.report}")
+        self.log.info(f"*******************************************")
         
 
 
