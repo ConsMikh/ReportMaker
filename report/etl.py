@@ -37,6 +37,7 @@ class ETLManager(PartMaker):
             self._data += self.transformer.transform(single_date.strftime('%Y-%m-%d'), extract_block[1:], file_exist = extract_block[0])
         self.loader.dataframe_load(self._data)
         self.report['dataframe'] = self.loader.dataframe
+        self.loader.dataframe_to_csv()
         self.log.info("Конец ETL")
 
 
@@ -114,9 +115,11 @@ class Loader(Worker):
         
         self._dataframe = pd.DataFrame.from_records(data, columns=['date', 'file_exist', 'theme', 'epic', 'project','task', 'pom_num'])
         # self.log.debug(f"Dataframe {self._dataframe.head}")
-        # dataframe.to_csv('Docs\\Base\\Reports\\raw\\report.csv', index=False)
 
     @property
     def dataframe(self):
         return self._dataframe
+
+    def dataframe_to_csv(self):
+        self._dataframe.to_csv('Docs\\Base\\Reports\\raw\\report.csv', index=False)
 
