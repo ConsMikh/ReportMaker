@@ -16,7 +16,7 @@
 //            "args" : ["period", "-t", "week", "-cp", "last", "--structure", "full", "--output", "md"]
 //            "args" : ["entity", "-t", "project", "-e", "Fundamentals of DE",  "-cp", "last_week", "--structure", "full", "--output", "md"]
 //            "args" : ["period", "-t", "month", "-cp", "last", "--structure", "full", "--output", "md"]
-            "args" : ["entity", "-t", "project", "-e", "Fundamentals of DE", "--structure", "full", "--output", "md"]
+            "args" : ["entity", "-t", "project", "-e", "[[Report Maker 2.0]]", "--structure", "full", "--output", "md"]
         },
         {
             "name": "Report Maker without params",

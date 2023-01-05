@@ -36,6 +36,9 @@ class MetadataPartMaker(PartMaker):
 
     def _set_entity_report_for_period(self):
         self.report['entity']['entity_type'] = self.task.get('entity_type')
+        self.report['entity']['entity_theme'] = None
+        self.report['entity']['entity_epic'] = None
+        self.report['entity']['entity_project'] = None
 
 
     def _set_entity_report_for_entity(self):

@@ -1,0 +1,41 @@
+{
+    "metadata": {
+        "report_date": "05-01-2023 14:56",
+        "report_maker": "report_maker.py",
+        "report_type": "entity",
+        "is_title": true,
+        "is_period": true,
+        "is_aggregated": true,
+        "aggregated_size": "full",
+        "is_detailed": true,
+        "is_links": true,
+        "links_size": "full",
+        "is_source": true,
+        "is_footer": true,
+        "is_raw": true,
+        "norma": 14
+    },
+    "entity": {
+        "entity_type": "project",
+        "entity_name": "[[Report Maker 2.0]]",
+        "entity_theme": "Проекты",
+        "entity_epic": "Личная эффективность",
+        "entity_project": "[[Report Maker 2.0]]"
+    },
+    "period": {
+        "start_date": "2022-12-26",
+        "start_date_task": "2010-01-01",
+        "end_date": "2023-01-05",
+        "days_num": 11,
+        "start_year": 2022,
+        "start_month_num": 12,
+        "start_month_name": "декабрь",
+        "start_week_num": 52,
+        "end_year": 2023,
+        "end_month_num": 1,
+        "end_month_name": "январь",
+        "end_week_num": 1,
+        "str_period": "\nПериод: 2022-12-26 - 2023-01-05\nКоличество дней в периоде: 11\nЭпик, к которому относится проект: Личная эффективность\nТема, к которой относится эпик: Проекты\n"
+    },
+    "title": "Отчет по проекту [[Report Maker 2.0]]\n"
+}

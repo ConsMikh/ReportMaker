@@ -5,6 +5,7 @@ from report.etl import ETLManager
 from report.metadata import MetadataPartMaker
 from report.period import PeriodPartMaker
 from report.title import TitlePartMaker
+from export.exporter import JSONExporter, MarkdownExporter, ScreenVisualizer
 
 from collections import deque
 
@@ -15,7 +16,12 @@ class ScenarioManager(Worker):
         'raw': ETLManager,
         'metadata': MetadataPartMaker,
         'period': PeriodPartMaker,
-        'title': TitlePartMaker
+        'title': TitlePartMaker,
+        'output': {
+            'screen': ScreenVisualizer,
+            'md': MarkdownExporter,
+            'json': JSONExporter
+        }
     }
 
 
@@ -41,6 +47,8 @@ class ScenarioManager(Worker):
         self._create_metadata_part()
         self._create_period_part()
         self._create_title_part()
+
+        self._add_output_worker()
         self.log.debug(f"Сценарий сформирован")
         return self._scenario
 
@@ -56,3 +64,9 @@ class ScenarioManager(Worker):
 
     def _create_title_part(self):
         self._scenario.append(ScenarioManager.SCENARIO_ACTORS['title'])
+
+    def _add_output_worker(self):
+        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['output']['screen'])
+        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['output']['json'])
+        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['output']['md'])
+        

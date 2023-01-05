@@ -66,7 +66,7 @@ class PeriodPartMaker(PartMaker):
         STR_PERIOD_TEMPLATE = {
         'period': f"\nНачало периода: {self.report['period']['start_date']}\nКонец периода: {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}",
         'week': f"\nНачало недели: {self.report['period']['start_date']}\nКонец недели: {self.report['period']['end_date']}\nНомер недели: {self.report['period']['start_week_num']}",
-        'month': f"\nНачало месяца: {self.report['period']['start_date']}\nКонец месяца: {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}",
+        'month': f"\nНачало месяца: {self.report['period']['start_date']}\nКонец месяца: {self.report['period']['end_date']}\nКоличество дней в месяце: {self.report['period']['days_num']}",
         'theme': f"\nПериод: {self.report['period']['start_date']} - {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}",
         'epic': f"\nПериод: {self.report['period']['start_date']} - {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}\nТема, к которой относится эпик: {self.report.get('entity',{}).get('entity_theme')}",
         'project': f"\nПериод: {self.report['period']['start_date']} - {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}\nЭпик, к которому относится проект: {self.report['entity']['entity_epic']}\nТема, к которой относится эпик: {self.report.get('entity',{}).get('entity_theme')}\n",
