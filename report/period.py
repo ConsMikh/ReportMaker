@@ -31,6 +31,7 @@ class PeriodPartMaker(PartMaker):
         start_date = self._get_start_date(self.task.get('start_date'))
         end_data = self._get_end_date(self.task.get('end_date'))
         self.report['period']['start_date'] = start_date.strftime('%Y-%m-%d')
+        self.report['period']['start_date_task'] = self.task.get('start_date').strftime('%Y-%m-%d')
         self.report['period']['end_date'] = end_data.strftime('%Y-%m-%d')
         self.report['period']['days_num'] = (end_data - start_date).days + 1
         
@@ -67,8 +68,8 @@ class PeriodPartMaker(PartMaker):
         'week': f"\nНачало недели: {self.report['period']['start_date']}\nКонец недели: {self.report['period']['end_date']}\nНомер недели: {self.report['period']['start_week_num']}",
         'month': f"\nНачало месяца: {self.report['period']['start_date']}\nКонец месяца: {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}",
         'theme': f"\nПериод: {self.report['period']['start_date']} - {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}",
-        'epic': f"\nПериод: {self.report['period']['start_date']} - {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}\nТема, к которой относится эпик: {self.report['entity']['entity_theme']}",
-        'project': f"\nПериод: {self.report['period']['start_date']} - {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}\nЭпик, к которому относится проект: {self.report['entity']['entity_epic']}\nТема, к которой относится эпик: {self.report['entity']['entity_theme']}\n",
-        'task': f"\nПериод: {self.report['period']['start_date']} - {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}\nПроект, к которому относится задача: {self.report['entity']['entity_project']}\nЭпик, к которому относится проект: {self.report['entity']['entity_epic']}\nТема, к которой относится эпик: {self.report['entity']['entity_theme']}\n"
+        'epic': f"\nПериод: {self.report['period']['start_date']} - {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}\nТема, к которой относится эпик: {self.report.get('entity',{}).get('entity_theme')}",
+        'project': f"\nПериод: {self.report['period']['start_date']} - {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}\nЭпик, к которому относится проект: {self.report['entity']['entity_epic']}\nТема, к которой относится эпик: {self.report.get('entity',{}).get('entity_theme')}\n",
+        'task': f"\nПериод: {self.report['period']['start_date']} - {self.report['period']['end_date']}\nКоличество дней в периоде: {self.report['period']['days_num']}\nПроект, к которому относится задача: {self.report['entity']['entity_project']}\nЭпик, к которому относится проект: {self.report['entity']['entity_epic']}\nТема, к которой относится эпик: {self.report.get('entity',{}).get('entity_theme')}\n"
         }
         return STR_PERIOD_TEMPLATE[self.report['entity']['entity_type']]
