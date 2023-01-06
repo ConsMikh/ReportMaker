@@ -8,6 +8,7 @@ from common.worker import PartMaker
 class MetadataPartMaker(PartMaker):
 
     def process(self):
+        
         self.log.info(f"Формирование метадаты")
         self.report['metadata'] = {}
         self._copy_task()

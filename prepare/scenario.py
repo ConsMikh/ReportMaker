@@ -6,6 +6,7 @@ from report.metadata import MetadataPartMaker
 from report.period import PeriodPartMaker
 from report.title import TitlePartMaker
 from export.exporter import JSONExporter, MarkdownExporter, ScreenVisualizer
+from report.detailed import DetailedPartMaker
 
 from collections import deque
 
@@ -17,6 +18,7 @@ class ScenarioManager(Worker):
         'metadata': MetadataPartMaker,
         'period': PeriodPartMaker,
         'title': TitlePartMaker,
+        'detailed': DetailedPartMaker,
         'output': {
             'screen': ScreenVisualizer,
             'md': MarkdownExporter,
@@ -47,6 +49,8 @@ class ScenarioManager(Worker):
         self._create_metadata_part()
         self._create_period_part()
         self._create_title_part()
+        self._create_detailed_part()
+
 
         self._add_output_worker()
         self.log.debug(f"Сценарий сформирован")
@@ -64,6 +68,9 @@ class ScenarioManager(Worker):
 
     def _create_title_part(self):
         self._scenario.append(ScenarioManager.SCENARIO_ACTORS['title'])
+
+    def _create_detailed_part(self):
+        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['detailed'])
 
     def _add_output_worker(self):
         self._scenario.append(ScenarioManager.SCENARIO_ACTORS['output']['screen'])
