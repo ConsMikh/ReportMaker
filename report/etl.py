@@ -68,9 +68,13 @@ class Extractor(Worker):
                 pomidor_flag = False
             if(pomidor_flag & (line[0] != '\n')): 
                 pomidors.append(line)
+
             if '#Помидорки' in line:
                 pomidor_flag = True
-        return pomidors
+        if len(pomidors)>1:
+            return pomidors
+        else:
+            return [True, '0']
 
 
 class Transformer(Worker):

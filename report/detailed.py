@@ -20,18 +20,24 @@ class DetailedPartMaker(PartMaker):
         self.log.info(f"Начато создание детализированной части отчета")
         self.report['detailed'] = {}
         
-        deep = self._get_tree_deep()
+        if self.data['pom_num'].loc[self.data['file_exist'] == True].count() > 0:
+            deep = self._get_tree_deep()
 
-        if self.report['metadata']['report_type'] == 'period':
-            total_pom = self.data['pom_num'].loc[self.data['file_exist']==True].sum()
-            self.tree.create_tree(total_pom = total_pom)
-            self.data[deep].apply(self.tree.add_node, axis = 1)
-        elif self.report['metadata']['report_type'] == 'entity':
-            total_pom = self.data['pom_num'].loc[(self.data['file_exist']==True) & (self.data[self.report['entity']['entity_type']] == self.report['entity']['entity_name'])].sum()
-            self.tree.create_tree(root_name = self.report['entity']['entity_name'], total_pom = total_pom)
-            self.data[deep].loc[(self.data['file_exist']==True) & (self.data[self.report['entity']['entity_type']] == self.report['entity']['entity_name'])].apply(self.tree.add_node, axis = 1)
-        # self.report['detailed']['detailed_tree'] = self.tree.get_tree_dict()
-        self.report['detailed']['str_detailed'] = self.tree.render_tree()
+            if self.report['metadata']['report_type'] == 'period':
+                total_pom = self.data['pom_num'].loc[self.data['file_exist']==True].sum()
+                self.tree.create_tree(total_pom = total_pom)
+                self.data[deep].apply(self.tree.add_node, axis = 1)
+            elif self.report['metadata']['report_type'] == 'entity':
+                total_pom = self.data['pom_num'].loc[(self.data['file_exist']==True) & (self.data[self.report['entity']['entity_type']] == self.report['entity']['entity_name'])].sum()
+                self.tree.create_tree(root_name = self.report['entity']['entity_name'], total_pom = total_pom)
+                self.data[deep].loc[(self.data['file_exist']==True) & (self.data[self.report['entity']['entity_type']] == self.report['entity']['entity_name'])].apply(self.tree.add_node, axis = 1)
+            self.report['detailed']['detailed_tree_root'] = self.tree.tree_root
+            self.report['detailed']['detailed_tree_nodes'] = self.tree.tree_nodes
+            self.report['detailed']['str_detailed'] = self.tree.render_tree()
+
+        else:
+            self.report['detailed']['str_detailed'] = []
+            self.log.debug(f"В dataframe отсутствуют данные о помидорках")
 
         self.log.info(f"Завершено создание детализированной части отчета")
 
