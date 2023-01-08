@@ -35,10 +35,12 @@ class TaskManager(Worker):
         self._task['report_maker'] = prog_name
         self._task['report_type'] = self.input.get('command')
         self._task['entity_type'] = self.input.get('type')
-        self._task['output'] = self.input.get('output')
+
         self._task['daily_path'] = self.settings.get('path',{}).get('daily_base')
         self._task['kbase_path'] = self.settings.get('path',{}).get('kbase')
         self._task['raw_path'] = self.settings.get('path',{}).get('raw_path')
+
+        self._task['output'] = self._set_output()
         self._task['entity_name'] = self._set_entity_name()
         self._task['start_date'] = self._set_start_date()
         self._task['end_date'] = self._set_end_date()
@@ -88,8 +90,8 @@ class TaskManager(Worker):
 
         for key in list_keys:
             if self._task.get(key) is None:
-                self.log.error(f"Отсутствует параметр задачи: {key}")
-                raise WrongTaskParameter(f"Отсутствует параметр задачи: {key}")
+                self.log.warning(f"Отсутствует параметр задачи: {key}")
+                # raise WrongTaskParameter(f"Отсутствует параметр задачи: {key}")
         return True
 
     @property
@@ -100,6 +102,13 @@ class TaskManager(Worker):
     def task(self, value):
         if isinstance(value ,dict) and self.check_task():
             self._task = value
+
+    def _set_output(self):
+        '''Возвращает способ вывода для отчета'''
+        if self.input.get('command') == 'raw':
+            return 'json'
+        else:
+            return self.input.get('output')
 
     def _set_entity_name(self):
         '''Возвращает название сущности из входных параметров'''

@@ -2,7 +2,8 @@
 Классы для вывода отчета
 '''
 
-import json
+import datetime
+import pandas as pd
 import os
 
 from common.worker import PartMaker
@@ -27,11 +28,14 @@ class Exporter(PartMaker):
         self.report_view += self.report['aggregated']['str_aggregated']
         self.report_view.append("\n\nДетализированная часть\n")
         self.report_view += self.report['detailed']['str_detailed']
+        self.report_view.append("\n\nСвязи\n")
+        self.report_view += self.report['links']['str_links']
+        self.report_view.append("\n\nСвязи\n")
+        self.report_view += self.report['source']['str_source']
 
     def _del_symbols(self, str):
         sc = set(['[',']'])
         return ''.join([c for c in str if c not in sc])
-
 
 
 class JSONExporter(Exporter):
@@ -43,15 +47,8 @@ class JSONExporter(Exporter):
 
     def process(self):
         self.log.info(f"Начат экспорт в файл JSON")
-        for name_part in self.report.keys():
-            if name_part == 'dataframe':
-                pass
-            else:
-                self.json_dict[name_part] = self.report[name_part]
-        file_name = self._get_file_name(self.report['title'],'json')
-
-        with open(os.path.join(self.file_path,file_name),'w',encoding='utf-8') as f:
-            json.dump(self.json_dict, f, ensure_ascii=False, indent=4)
+        data = self.report['dataframe'].apply((lambda x: ''.join([c for c in x if c not in set(['[',']'])])), axis = 1)
+        self.report['dataframe'].to_json(path_or_buf = os.path.join(self.task['raw_path'],f"raw_{datetime.date.today().strftime('%Y-%m-%d')}.json") , orient = 'records')
         self.log.info(f"Завершен экспорт в файл JSON")
 
 

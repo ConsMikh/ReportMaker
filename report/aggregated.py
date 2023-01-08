@@ -9,7 +9,7 @@ class AggregatedPartMaker(PartMaker):
     def __init__(self, task, report, log_level="ERROR") -> None:
         super().__init__(task, report, log_level)
         self.report['aggregated'] = {}
-        self.data = self.report['dataframe']
+        self.data = self.report['dataframe'].fillna('Без указания')
 
 
     def make_part(self):

@@ -52,7 +52,7 @@ class CLParser(Worker):
         entity.add_argument('--monthname', '-mn')
         entity.add_argument('--year', '-y', type=int)
         entity.add_argument('--structure', '-st', choices= ['short', 'summary', 'detailed', 'full'], default='full')
-        entity.add_argument('--output', '-o', choices= ['screen', 'md', 'json'], default='screen')
+        entity.add_argument('--output', '-o', choices= ['screen', 'md'], default='screen')
         entity.add_argument('--reportpath', '-rp', type=pathlib.Path)
 
         raw = subparsers.add_parser('raw')

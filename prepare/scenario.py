@@ -8,24 +8,35 @@ from report.title import TitlePartMaker
 from export.exporter import JSONExporter, MarkdownExporter, ScreenVisualizer
 from report.detailed import DetailedPartMaker
 from report.aggregated import PeriodAggregatedPartMaker, PeriodAggregatedPartMakerFull, EntityAggregatedPartMaker, EntityAggregatedPartMakerFull
+from report.links import PeriodLinksPartMaker, EntityLinksPartMaker
+from report.source import SourcePartMaker
 
 from collections import deque
 
 
 class ScenarioManager(Worker):
 
-    SCENARIO_ACTORS = {
-        'raw': ETLManager,
-        'metadata': MetadataPartMaker,
-        'period': PeriodPartMaker,
-        'title': TitlePartMaker,
-        'detailed': DetailedPartMaker,
-        'aggregated': EntityAggregatedPartMakerFull,
-        'output': {
-            'screen': ScreenVisualizer,
-            'md': MarkdownExporter,
-            'json': JSONExporter
+
+    aggregated_dict = {
+        'period':{
+            'short': PeriodAggregatedPartMaker,
+            'full': PeriodAggregatedPartMakerFull
+        },
+        'entity':{
+            'short': EntityAggregatedPartMaker,
+            'full': EntityAggregatedPartMakerFull
         }
+    }
+
+    links_dict = {
+        'period': PeriodLinksPartMaker,
+        'entity': EntityLinksPartMaker
+    }
+
+    output_dict = {
+        'screen': ScreenVisualizer,
+        'md': MarkdownExporter,
+        'json': JSONExporter
     }
 
 
@@ -47,39 +58,28 @@ class ScenarioManager(Worker):
     def create_scenario(self, task):
         self.log.debug(f"Формирование сценария")
         self._task = task
-        self._create_etl_part()
-        self._create_metadata_part()
-        self._create_period_part()
-        self._create_title_part()
-        self._create_detailed_part()
-        self._create_aggregated_part()
 
+        entity_type = self._task['report_type']
+        output = self._task['output']
 
-        self._add_output_worker()
+        self._scenario.append(ETLManager)
+        self._scenario.append(MetadataPartMaker)
+        if self._task['is_period']:
+            self._scenario.append(PeriodPartMaker)
+        if self._task['is_title']:
+            self._scenario.append(TitlePartMaker)
+        if self._task['is_aggregated']:
+            self._scenario.append(ScenarioManager.aggregated_dict[entity_type][self._task['aggregated_size']])
+        if self._task['is_detailed']:
+            self._scenario.append(DetailedPartMaker)
+        if self._task['is_links']:
+            self._scenario.append(ScenarioManager.links_dict[entity_type])
+        if self._task['is_source']:
+            self._scenario.append(SourcePartMaker)
+        self._scenario.append(ScenarioManager.output_dict[output])
+
+        
         self.log.debug(f"Сценарий сформирован")
         return self._scenario
 
-    def _create_etl_part(self):
-        if self._task.get('is_raw', False):
-            self._scenario.append(ScenarioManager.SCENARIO_ACTORS['raw'])
-
-    def _create_metadata_part(self):
-        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['metadata'])
-
-    def _create_period_part(self):
-        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['period'])
-
-    def _create_title_part(self):
-        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['title'])
-
-    def _create_detailed_part(self):
-        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['detailed'])
-
-    def _create_aggregated_part(self):
-        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['aggregated'])
-
-    def _add_output_worker(self):
-        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['output']['screen'])
-        # self._scenario.append(ScenarioManager.SCENARIO_ACTORS['output']['json'])
-        self._scenario.append(ScenarioManager.SCENARIO_ACTORS['output']['md'])
         
