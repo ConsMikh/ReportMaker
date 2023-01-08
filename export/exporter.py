@@ -25,7 +25,7 @@ class Exporter(PartMaker):
         self.report_view.append(self.report.get('period').get('str_period'))
         self.report_view.append(f"\n\nАгрегированная часть\n")
         self.report_view += self.report['aggregated']['str_aggregated']
-        self.report_view.append("\n\nДетализированное представление\n")
+        self.report_view.append("\n\nДетализированная часть\n")
         self.report_view += self.report['detailed']['str_detailed']
 
     def _del_symbols(self, str):

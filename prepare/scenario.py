@@ -7,7 +7,7 @@ from report.period import PeriodPartMaker
 from report.title import TitlePartMaker
 from export.exporter import JSONExporter, MarkdownExporter, ScreenVisualizer
 from report.detailed import DetailedPartMaker
-from report.aggregated import PeriodAggregatedPartMaker, PeriodAggregatedPartMakerFull
+from report.aggregated import PeriodAggregatedPartMaker, PeriodAggregatedPartMakerFull, EntityAggregatedPartMaker, EntityAggregatedPartMakerFull
 
 from collections import deque
 
@@ -20,7 +20,7 @@ class ScenarioManager(Worker):
         'period': PeriodPartMaker,
         'title': TitlePartMaker,
         'detailed': DetailedPartMaker,
-        'aggregated': PeriodAggregatedPartMaker,
+        'aggregated': EntityAggregatedPartMakerFull,
         'output': {
             'screen': ScreenVisualizer,
             'md': MarkdownExporter,
