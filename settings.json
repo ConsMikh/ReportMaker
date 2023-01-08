@@ -2,7 +2,7 @@
 {
     "path":{
         "daily_base":"",
-        "kbase":"d:\\Data\\Obsidian\\ConstantinVault\\KBase\\",
+        "kbase":"Docs/Base/KBase",
         "output_md_path":"Docs/Base/Reports/md",
         "output_json_path":"Docs/Base/Reports/json",
         "raw_path":"Docs/Base/Reports/raw"
