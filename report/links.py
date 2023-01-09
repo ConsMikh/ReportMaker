@@ -32,22 +32,23 @@ class LinksPartMaker(PartMaker):
 
     def make_str_links(self):
         link_str = []
-        link_str.append(f"Даты, в которые были записи\n")
+        link_str.append(f"Даты, в которые были записи о помидорках\n")
         for note in self.report['links']['list_notes']:
             str = f"[[{note[0]}]] - {note[1]}\n"
             link_str.append(str)
         
-        if len(self.report.get('links',{}).get('list_create')) > 0:
-            link_str.append(f"За период были созданы заметки:\n")
-            for note in self.report['links']['list_create']:
-                str = f"[[{note}]]\n"
-                link_str.append(str)
+        if self.report['metadata']['report_type'] == 'period':
+            if len(self.report.get('links',{}).get('list_create')) > 0:
+                link_str.append(f"За период были созданы заметки:\n")
+                for note in self.report['links']['list_create']:
+                    str = f"[[{note}]]\n"
+                    link_str.append(str)
 
-        if len(self.report.get('links',{}).get('list_change')) > 0:
-            link_str.append(f"\nЗа период были изменены заметки:\n")
-            for note in self.report['links']['list_change']:
-                str = f"[[{note}]]\n"
-                link_str.append(str)      
+            if len(self.report.get('links',{}).get('list_change')) > 0:
+                link_str.append(f"\nЗа период были изменены заметки:\n")
+                for note in self.report['links']['list_change']:
+                    str = f"[[{note}]]\n"
+                    link_str.append(str)      
 
         self.report['links']['str_links'] = link_str
 

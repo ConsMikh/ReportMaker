@@ -30,7 +30,7 @@ class Exporter(PartMaker):
         self.report_view += self.report['detailed']['str_detailed']
         self.report_view.append("\n\nСвязи\n")
         self.report_view += self.report['links']['str_links']
-        self.report_view.append("\n\nСвязи\n")
+        self.report_view.append("\n\nИсточники\n")
         self.report_view += self.report['source']['str_source']
 
     def _del_symbols(self, str):

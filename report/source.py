@@ -21,8 +21,10 @@ class SourcePartMaker(PartMaker):
             str_source.append(f"В базе обнаружены записи за все дни\n")
         elif data['date'].loc[data['file_exist'] == False].nunique() == self.report['period']['days_num']:
             str_source.append(f"В базе не обнаружены записи за указанный период\n")
-        else:
+        else: 
             str_source.append(f"Количество дней, для которых в базе обнаружены файлы заметок: {date_num}\n")
+        
+        if self.report['metadata']['report_type'] == 'period':
             date_num_lost = data['date'].loc[data['file_exist'] == False].nunique()
             if date_num_lost > 0:
                 str_source.append(f"Не обнаружены записи для следующих дат:\n")
@@ -31,7 +33,7 @@ class SourcePartMaker(PartMaker):
                     date_num_lost_list += ['\n']
                 str_source.extend(date_num_lost_list)
         
-        str_source.append(f"\n\n\nДата создания отчета: {self.report['metadata']['report_date']}\n")
+        str_source.append(f"\n\nДата создания отчета: {self.report['metadata']['report_date']}\n")
         str_source.append(f"Отчет создан: {self.report['metadata']['report_maker']}\n")
 
         self.report['source']['str_source'] = str_source 
