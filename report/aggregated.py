@@ -21,7 +21,7 @@ class AggregatedPartMaker(PartMaker):
         if self.data['pom_num'].loc[self.data['file_exist'] == True].count() > 0:
             self.make_part()
         else:
-            self.report['detailed']['str_aggregated'] = []
+            self.report['aggregated']['str_aggregated'] = []
             self.log.debug(f"В dataframe отсутствуют данные о помидорках")
         self.log.info(f"Агрегированная часть сформирована")
 

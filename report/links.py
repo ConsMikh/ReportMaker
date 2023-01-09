@@ -39,7 +39,7 @@ class LinksPartMaker(PartMaker):
         
         if self.report['metadata']['report_type'] == 'period':
             if len(self.report.get('links',{}).get('list_create')) > 0:
-                link_str.append(f"За период были созданы заметки:\n")
+                link_str.append(f"\nЗа период были созданы заметки:\n")
                 for note in self.report['links']['list_create']:
                     str = f"[[{note}]]\n"
                     link_str.append(str)

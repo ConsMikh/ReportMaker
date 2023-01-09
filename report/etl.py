@@ -37,7 +37,7 @@ class ETLManager(PartMaker):
             self._data += self.transformer.transform(single_date.strftime('%Y-%m-%d'), extract_block[1:], file_exist = extract_block[0])
         self.loader.dataframe_load(self._data)
         self.report['dataframe'] = self.loader.dataframe
-        self.loader.dataframe_to_csv()
+
         self.log.info("Конец ETL")
 
 
