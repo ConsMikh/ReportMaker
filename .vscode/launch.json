@@ -13,14 +13,44 @@
             "program": "report_maker.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args" : ["period", "-t", "week", "-cp", "last", "--structure", "full", "--output", "md", "-rp", "d:\\Data\\Obsidian\\ConstantinVault\\Daily\\WeeklyReport\\"]
-//            "args" : ["entity", "-t", "project", "-e", "Fundamentals of DE",  "-cp", "last_week", "--structure", "full", "--output", "md"]
-//            "args" : ["period", "-t", "month", "-cp", "last", "--structure", "full", "--output", "md"]
-//            "args" : ["entity", "-t", "project", "-e", "[[Report Maker 2.0]]", "--structure", "full", "--output", "md"]
-//            "args" : ["entity", "-t", "theme", "-e", "Уют", "--structure", "full", "--output", "md"]
-//            "args" : ["entity", "-t", "task", "-e", "Создание обработчика задачи", "--structure", "full", "--output", "md"]
-//              "args" : ["raw", "-cp", "last_week"]
-
+            //            "args" : ["period", "-t", "week", "-cp", "last", "--structure", "full", "--output", "md", "-rp", "d:\\Data\\Obsidian\\ConstantinVault\\Daily\\WeeklyReport\\"]
+            "args": [
+                "entity",
+                "-t",
+                "project",
+                "-e",
+                "Fundamentals of DE",
+                "--structure",
+                "full",
+                "--output",
+                "md"
+            ]
+            //            "args" : ["period", "-t", "month", "-cp", "last", "--structure", "full", "--output", "md"]
+            // "args": [
+            //     "entity",
+            //     "-t",
+            //     "project",
+            //     "-e",
+            //     "Fundamentals of DE",
+            //     "--structure",
+            //     "full",
+            //     "--output",
+            //     "screen"
+            // ]
+            //            "args" : ["entity", "-t", "theme", "-e", "Уют", "--structure", "full", "--output", "md"]
+            //            "args" : ["entity", "-t", "task", "-e", "Создание обработчика задачи", "--structure", "full", "--output", "md"]
+            //            "args" : ["raw", "-cp", "last_week"]
+            // "args": [
+            //     "entity",
+            //     "-t",
+            //     "epic",
+            //     "-e",
+            //     "Python",
+            //     "--structure",
+            //     "full",
+            //     "--output",
+            //     "screen"
+            // ]
         },
         {
             "name": "Report Maker without params",
@@ -29,7 +59,6 @@
             "program": "report_maker.py",
             "console": "integratedTerminal",
             "justMyCode": true
-            
         },
         {
             "name": "Python: текущий файл",
