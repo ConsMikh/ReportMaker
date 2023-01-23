@@ -1,0 +1,13 @@
+{
+    "path": {
+        "daily_base": "tests\\testdata\\DailyBase",
+        "kbase": "tests\\testdata\\KBase",
+        "output_md_path": "tests\\testdata\\Reports\\md",
+        "output_json_path": "tests\\testdata\\Reports\\json"
+    },
+    "analyst": {
+        "norma": 14,
+        "max_year": 2100,
+        "min_year": 2010
+    }
+}
