@@ -87,15 +87,15 @@ class ReportMaker(Worker):
         self.make_scenario()
         for ind, part in enumerate(self.scenario):
             self.log.info(f"****************STEP {ind+1}*********************")
-            part_worker = part(self.task, self.report)
+            part_worker = part(self.task, self.report, log_level = 'INFO')
             try:
                 part_worker.process()
             except Exception as e:
                 self.log.error(f"При выполнении {part_worker.__class__.__name__} произошла ошибка: {e}")
 
-        self.log.info(f"****************REPORT*********************")
-        self.log.info(f"{self.report}")
-        self.log.info(f"*******************************************")
+        self.log.debug(f"****************REPORT*********************")
+        self.log.debug(f"{self.report}")
+        self.log.debug(f"*******************************************")
         
 
 

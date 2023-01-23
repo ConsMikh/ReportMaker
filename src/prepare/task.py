@@ -551,7 +551,7 @@ class TaskManager(Worker):
                 int(num)
                 return True
             except Exception as e:
-                self.log.error(
+                self.log.warning(
                     f"Не является целым числом: {num}")
                 return False
         else:

@@ -15,7 +15,7 @@ class Worker():
         formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
         
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
+        console_handler.setLevel(log_level)
         console_handler.setFormatter(formatter)
 
         if not os.path.exists('logs'):
