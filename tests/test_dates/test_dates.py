@@ -1,46 +1,33 @@
-import pytest
-import pandas as pd
+from prepare.task import TaskManager
 import datetime
-import calendar
 
 
-def pytest_generate_tests(metafunc):
+def test_right_dates_list(test_input):
+    '''Тест проверяет правильность формирования начальной и конечной даты периода при различных входных параметрах'''
+    input = test_input[0]
+    settings = test_input[1]
+    target = test_input[2]
 
-    # Пропускаем все функции, у которых нет аргумента test_inputss
-    if 'test_input' not in metafunc.fixturenames:
-        return
+    tm = TaskManager(input, settings, log_level="CRITICAL")
+    tm.task['start_date'] = tm._set_start_date()
+    tm.task['end_date'] = tm._set_end_date()
 
-    test_cases = []
-    test_excel = pd.ExcelFile('tests/testdata/dateinputs.xlsx')
-    dataset = test_excel.parse('right')
-    variants = dataset.apply(row_parse, axis=1)
+    test_start_date = tm.task['start_date']
+    test_end_date = tm.task['end_date']
 
-    for i, v in enumerate(variants):
-        test_cases.append(pytest.param(v, id=str(i+1)))
-
-    return metafunc.parametrize("test_input", test_cases)
+    assert (test_start_date, test_end_date) == target
 
 
-def row_parse(row):
-    """Преобразует данные dataframe pandas, полученного из листа 'right' excel в набор данных для выполнения тестов
-
-    Args:
-        row : строка из dataframe
-
-    Returns:
-    input: имитация словаря параметров входной строки
-    settings: имитация словаря настроек
-    (start_data, end_data): целевые значения начальной и конечной даты
-    """
-    mark = row[0]
+def test_right_dates_single():
+    '''Тест проверяет правильность формирования начальной и конечной даты периода при различных входных параметрах'''
     input = {
-        'command': row[1],
-        'type': row[2],
-        'startdate': row[3],
-        'enddate': row[4],
-        'currentperiod': row[5],
-        'monthname': row[6],
-        'year': row[7]
+        'command': 'period',
+        'type': 'week',
+        'startdate': datetime.date.fromisoformat('2022-12-12'),
+        'enddate': datetime.date.fromisoformat('2022-12-18'),
+        'currentperiod': None,
+        'monthname': None,
+        'year': None
     }
     settings = {"analyst":
                 {
@@ -48,64 +35,17 @@ def row_parse(row):
                     "min_year": 2010
                 }
                 }
-    if mark == 'calc':
-        start_date, end_date = get_period_dates(row[2], row[5])
-    else:
-        start_date = datetime.date.fromisoformat(row[-3])
-        end_date = datetime.date.fromisoformat(row[-2])
-    return input, settings, (start_date, end_date)
+    target_start = "2022-12-12"
+    target_end = "2022-12-18"
 
+    target = (datetime.date.fromisoformat(target_start),
+              datetime.date.fromisoformat(target_end))
 
-def get_period_dates(type, cur_per):
-    '''Определяет начальную и конечную дату для случаев, когда период указан параметрами last, last_week, last_month, week, month'''
-    today = datetime.date.today()
-    match cur_per:
-        case "last":
-            if type == 'week':
-                start_date = today - datetime.timedelta(calendar.weekday(
-                    today.year, today.month, today.day)) - datetime.timedelta(7)
-                end_date = start_date + datetime.timedelta(6)
-                return start_date, end_date
-            if type == 'month':
-                date_in_month = datetime.date(
-                    today.year, today.month, 1) - datetime.timedelta(5)
-                start_date = datetime.date(
-                    date_in_month.year, date_in_month.month, 1)
-                _, days = calendar.monthrange(
-                    start_date.year, start_date.month)
-                end_date = start_date + datetime.timedelta(days-1)
-                return start_date, end_date
-        case "week":
-            start_date = today - \
-                datetime.timedelta(calendar.weekday(
-                    today.year, today.month, today.day))
-            end_date = start_date + datetime.timedelta(6)
-            return start_date, end_date
-        case "month":
-            start_date = datetime.date(today.year, today.month, 1)
-            _, days = calendar.monthrange(
-                start_date.year, start_date.month)
-            end_date = start_date + datetime.timedelta(days-1)
-            return start_date, end_date
-        case "last_week":
-            start_date = today - datetime.timedelta(calendar.weekday(
-                today.year, today.month, today.day)) - datetime.timedelta(7)
-            end_date = start_date + datetime.timedelta(6)
-            return start_date, end_date
-        case "last_month":
-            date_in_month = datetime.date(
-                today.year, today.month, 1) - datetime.timedelta(5)
-            start_date = datetime.date(
-                date_in_month.year, date_in_month.month, 1)
-            _, days = calendar.monthrange(
-                start_date.year, start_date.month)
-            end_date = start_date + datetime.timedelta(days-1)
-            return start_date, end_date
+    tm = TaskManager(input, settings, log_level="CRITICAL")
+    tm.task['start_date'] = tm._set_start_date()
+    tm.task['end_date'] = tm._set_end_date()
 
+    test_start_date = tm.task['start_date']
+    test_end_date = tm.task['end_date']
 
-def test_dates_right(test_input):
-    '''Описание теста'''
-    v = test_input[0]
-    w = test_input[1]
-    z = test_input[2]
-    assert test_input == test_input
+    assert (test_start_date, test_end_date) == target

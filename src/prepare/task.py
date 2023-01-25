@@ -3,11 +3,16 @@
 '''
 import datetime
 import calendar
+from dateutil.parser import *
 
 from common.worker import Worker
 
 
 class WrongInputParameter(Exception):
+    pass
+
+
+class WrongDatesParameter(Exception):
     pass
 
 
@@ -25,14 +30,15 @@ class TaskManager(Worker):
 
     DATE_FORMAT = '%Y-%m-%d'
 
-    def __init__(self, log_level="ERROR") -> None:
+    def __init__(self, input, settings, log_level="ERROR") -> None:
         super().__init__(log_level)
         self._task = {}
+        self.settings = settings
+        self.input = input
 
-    def set_task_param(self, task_input, prog_name):
+    def set_task_param(self, prog_name):
         '''Установка известных параметров'''
-        self.settings = task_input['settings']
-        self.input = task_input['input']
+
         self.log.debug(
             "Установка известных параметров")
         self._task['report_date'] = datetime.datetime.today().strftime(
@@ -178,6 +184,15 @@ class TaskManager(Worker):
                         else:
                             year = int(self.input.get('year'))
                         return datetime.date(year, int(self.input.get('currentperiod')), 1)
+                if self._is_int(self.input.get('currentperiod') in TaskManager.MONTH_LIST):
+                    if self.input.get('year') == None:
+                        year = datetime.date.today().year
+                    else:
+                        year = int(self.input.get('year'))
+                    ret_date = datetime.date(year, TaskManager.MONTH_NUM.get(
+                        self.input.get('currentperiod')), 1)
+                    return ret_date
+
             elif self.input.get('monthname'):
                 if self.input.get('year') == None:
                     year = datetime.date.today().year
@@ -195,14 +210,15 @@ class TaskManager(Worker):
             if start == datetime.date(int(self.settings['analyst']['min_year']), 1, 1):
                 return datetime.date(int(self.settings['analyst']['max_year']), 12, 31)
             if self.input.get('type') == 'period' or (self.input.get('command') in ['raw', 'entity'] and self.input.get('startdate')):
-                return self._task.get('enddate')
+                return parser().parse(self.input.get('enddate')).date()
             if self.input.get('type') == 'week' or self.input.get('currentperiod') in ['week', 'last_week']:
                 return start + datetime.timedelta(6)
-            if self.input.get('type') == 'month' or self.input.get('currentperiod') in ['month', 'last_month'] or self._is_int(self.input.get('currentperiod')):
+            if self.input.get('type') == 'month' or self.input.get('currentperiod') in ['month', 'last_month'] or self._is_int(self.input.get('currentperiod') or self.input.get('currentperiod') in TaskManager.MONTH_LIST):
                 _, days = calendar.monthrange(start.year, start.month)
                 return self._task.get('start_date') + datetime.timedelta(days-1)
             if self.input.get('year') and not (self.input.get('startdate') or self.input.get('currentperiod') or self.input.get('monthname')):
                 return datetime.date(int(self.input.get('year')), 12, 31)
+            return self.input.get('enddate')
 
     def _set_is_part(self, part):
         '''Определяет наличие/отсутствие раздела в отчета на основе входных параметров'''
@@ -344,14 +360,15 @@ class TaskManager(Worker):
         '''
         if self.input.get('startdate') and not isinstance(self.input.get('startdate'), datetime.date):
             try:
-                datetime.date.fromisoformat(self.input.get('startdate'))
-            except ValueError:
+                timestr = self.input.get('startdate')
+                parser().parse(timestr)
+            except ParserError:
                 self.log.error(
                     f"Неверный формат начальной даты {self.input.get('startdate')}")
                 raise WrongDatesParameter(
                     f"Неверный формат начальной даты {self.input.get('startdate')}")
 
-        if self.input.get('currentperiod') and self.input.get('type') in ['week', 'month'] and not (self._is_int(self.input.get('currentperiod')) or self.input.get('currentperiod') == 'last'):
+        if self.input.get('currentperiod') and self.input.get('type') in ['week', 'month'] and not (self._is_int(self.input.get('currentperiod')) or self.input.get('currentperiod') == 'last' or self.input.get('currentperiod') in TaskManager.MONTH_LIST):
             self.log.error(
                 f"Неверный формат относительного периода {self.input.get('currentperiod')}")
             raise WrongDatesParameter(
@@ -371,11 +388,11 @@ class TaskManager(Worker):
                 raise WrongDatesParameter(
                     f"Неверный номер месяца: {self.input.get('currentperiod')}")
 
-        if self.input.get('currentperiod') and self.input.get('command') in ['entity', 'raw'] and not (self._is_int(self.input.get('currentperiod')) or self.input.get('currentperiod') in ['last_week', 'week', 'last_month', 'month', None]):
+        if self.input.get('currentperiod') and self.input.get('command') in ['entity', 'raw'] and not (self._is_int(self.input.get('currentperiod')) or self.input.get('currentperiod') in ['last_week', 'week', 'last_month', 'month', None] or self.input.get('currentperiod') in TaskManager.MONTH_LIST):
             self.log.error(
-                f"Неверный формат относительного периода {self.input.get('currentperiod')}")
+                f"Неверный формат относительного периода 2 {self.input.get('currentperiod')}")
             raise WrongDatesParameter(
-                f"Неверный формат относительного периода {self.input.get('currentperiod')}")
+                f"Неверный формат относительного периода 2 {self.input.get('currentperiod')}")
 
         if not self.input.get('monthname') in TaskManager.MONTH_LIST:
             self.log.error(
@@ -496,8 +513,8 @@ class TaskManager(Worker):
         '''
         if self.input.get('enddate') and not isinstance(self.input.get('enddate'), datetime.date):
             try:
-                datetime.date.fromisoformat(self.input.get('enddate'))
-            except ValueError:
+                parser().parse(self.input.get('enddate'))
+            except ParserError:
                 self.log.error(
                     f"Неверный формат конечной даты {self.input.get('enddate')}")
                 raise WrongDatesParameter(
@@ -507,10 +524,9 @@ class TaskManager(Worker):
             start = self.input.get('startdate')
             end = self.input.get('enddate')
             if not isinstance(start, datetime.date):
-                start = datetime.date.fromisoformat(
-                    self.input.get('startdate'))
+                start = parser().parse(self.input.get('startdate')).date()
             if not isinstance(end, datetime.date):
-                end = datetime.date.fromisoformat(self.input.get('enddate'))
+                end = parser().parse(self.input.get('enddate')).date()
             if end < start:
                 self.log.error(
                     f"Конечная дата {end.strftime('%Y-%m-%d')} раньше начальной {start.strftime('%Y-%m-%d')}")
@@ -534,7 +550,7 @@ class TaskManager(Worker):
         '''Проверяет формат даты и возвращает datetime.date, если возможно'''
         if not isinstance(date, datetime.date):
             try:
-                date = datetime.date.fromisoformat(date)
+                date = parser().parse(date).date()
                 return date
             except ValueError as e:
                 self.log.error(
@@ -546,13 +562,10 @@ class TaskManager(Worker):
     def _is_int(self, num):
         if num == None:
             return False
-        if not isinstance(num, int):
-            try:
-                int(num)
-                return True
-            except Exception as e:
-                self.log.warning(
-                    f"Не является целым числом: {num}")
-                return False
-        else:
+        if isinstance(num, int):
             return True
+        try:
+            int(num)
+            return True
+        except ValueError as e:
+            return False

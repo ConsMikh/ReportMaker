@@ -13,7 +13,8 @@ class ReportMaker(Worker):
     '''Основной класс, отвечающий за управление процессом создания отчета
     Создает все необходимые объекты и выполняет вызовы их методов
     '''
-    def __init__(self, *args, log_level = 'ERROR') -> None:
+
+    def __init__(self, *args, log_level='ERROR') -> None:
         super().__init__(log_level)
         self.cl_params = list(*args)[1:]
         self.prog_name = list(*args)[0]
@@ -27,9 +28,10 @@ class ReportMaker(Worker):
             self.namespace = cl_parser.get_input_namespace(self.cl_params)
             self.log.debug(f"****************INPUT*********************")
             self.log.debug(f"{self.namespace}")
-            self.log.debug(f"*****************************************")   
+            self.log.debug(f"*****************************************")
         except ParsingCommandLineError as e:
-            self.log.error(f"Возвращена ошибка из парсера командной строки: {e}")
+            self.log.error(
+                f"Возвращена ошибка из парсера командной строки: {e}")
 
     def settings_file_parsing(self):
         '''Парсинг файла настроек'''
@@ -39,43 +41,48 @@ class ReportMaker(Worker):
             self.settings = set_parser.get_settings_namespace()
             self.log.debug(f"****************SETTINGS*********************")
             self.log.debug(f"{self.settings}")
-            self.log.debug(f"*****************************************")   
+            self.log.debug(f"*****************************************")
         except Exception as e:
-            self.log.warning(f'Получена ошибка при выполнении парсинга файла настроек: {e}')
+            self.log.warning(
+                f'Получена ошибка при выполнении парсинга файла настроек: {e}')
 
     def make_task(self):
         '''Создание задачи для создания отчета'''
         self.log.info("Создание задачи")
-        task_manager = TaskManager(log_level='INFO')
+        task_manager = TaskManager(
+            self.namespace, self.settings, log_level='INFO')
         try:
-            task_manager.set_task_param(task_input = {
-                'settings': self.settings,
-                'input': self.namespace
-            }, prog_name = self.prog_name)
+            task_manager.set_task_param(prog_name=self.prog_name)
             if task_manager.check_task():
                 self.task = task_manager.task
                 self.log.debug(f"****************TASK*********************")
                 self.log.debug(f"{self.task}")
                 self.log.debug(f"*****************************************")
         except WrongInputParameter as e:
-            self.log.critical('Завершение работы из-за некорректных входных данных')
-            raise Exception(f'Завершение работы из-за некорректных входных данных: {e}')
+            self.log.critical(
+                'Завершение работы из-за некорректных входных данных')
+            raise Exception(
+                f'Завершение работы из-за некорректных входных данных: {e}')
         except WrongTaskParameter as e:
-            self.log.critical('Завершение работы из-за некорректных параметров задачи')
-            raise Exception(f'Завершение работы из-за некорректных параметров задачи: {e}')        
+            self.log.critical(
+                'Завершение работы из-за некорректных параметров задачи')
+            raise Exception(
+                f'Завершение работы из-за некорректных параметров задачи: {e}')
         self.log.info("Задача создана")
 
     def make_scenario(self):
         '''Создание сценария формирования отчета'''
-        self.log.info("Создание сценария формирования отчета")
+        self.log.info(
+            "Создание сценария формирования отчета")
         scenario_manager = ScenarioManager(log_level='INFO')
         try:
             self.scenario = scenario_manager.create_scenario(self.task)
             self.log.debug(f"***************SCENARIO******************")
             self.log.debug(f"{list(scenario_manager.scenario)}")
-            self.log.debug(f"*****************************************")   
+            self.log.debug(f"*****************************************")
         except Exception as e:
-            self.log.warning(f'Получена ошибка при создании сценария формирования отчета: {e}')
+            self.log.warning(
+                f'Получена ошибка при создании сценария формирования отчета: {e}')
         self.log.info("Сценарий сформирован")
 
     def start(self):
@@ -87,17 +94,13 @@ class ReportMaker(Worker):
         self.make_scenario()
         for ind, part in enumerate(self.scenario):
             self.log.info(f"****************STEP {ind+1}*********************")
-            part_worker = part(self.task, self.report, log_level = 'INFO')
+            part_worker = part(self.task, self.report, log_level='INFO')
             try:
                 part_worker.process()
             except Exception as e:
-                self.log.error(f"При выполнении {part_worker.__class__.__name__} произошла ошибка: {e}")
+                self.log.error(
+                    f"При выполнении {part_worker.__class__.__name__} произошла ошибка: {e}")
 
         self.log.debug(f"****************REPORT*********************")
         self.log.debug(f"{self.report}")
         self.log.debug(f"*******************************************")
-        
-
-
-
-
