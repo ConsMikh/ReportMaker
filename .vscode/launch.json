@@ -14,19 +14,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "entity",
-                "-t",
-                "theme",
-                "-e",
-                "Уют",
-                "-s",
-                "12-12-2022",
-                "-l",
-                "20-12-2022",
-                "--structure",
-                "full",
-                "--output",
-                "md"
+                "raw"
             ]
             //            "args" : ["entity", "-t", "project", "-e", "Fundamentals of DE",  "-cp", "last_week", "--structure", "full", "--output", "md"]
             // "args": [

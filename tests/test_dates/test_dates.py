@@ -21,10 +21,10 @@ def test_right_dates_list(test_input):
 def test_right_dates_single():
     '''Тест проверяет правильность формирования начальной и конечной даты периода при различных входных параметрах'''
     input = {
-        'command': 'period',
-        'type': 'week',
-        'startdate': datetime.date.fromisoformat('2022-12-12'),
-        'enddate': datetime.date.fromisoformat('2022-12-18'),
+        'command': 'raw',
+        'type': None,
+        'startdate': None,
+        'enddate': None,
         'currentperiod': None,
         'monthname': None,
         'year': None
@@ -35,8 +35,8 @@ def test_right_dates_single():
                     "min_year": 2010
                 }
                 }
-    target_start = "2022-12-12"
-    target_end = "2022-12-18"
+    target_start = "2010-01-01"
+    target_end = "2050-12-31"
 
     target = (datetime.date.fromisoformat(target_start),
               datetime.date.fromisoformat(target_end))

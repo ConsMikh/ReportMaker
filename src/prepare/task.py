@@ -213,10 +213,12 @@ class TaskManager(Worker):
                 return parser().parse(self.input.get('enddate')).date()
             if self.input.get('type') == 'week' or self.input.get('currentperiod') in ['week', 'last_week']:
                 return start + datetime.timedelta(6)
-            if self.input.get('type') == 'month' or self.input.get('currentperiod') in ['month', 'last_month'] or self._is_int(self.input.get('currentperiod') or self.input.get('currentperiod') in TaskManager.MONTH_LIST):
+            if self.input.get('year') and not self.input.get('currentperiod'):
+                return datetime.date(int(self.input.get('year')), 12, 31)
+            if self.input.get('type') == 'month' or self.input.get('currentperiod') in ['month', 'last_month'] or self._is_int(self.input.get('currentperiod')) or self.input.get('currentperiod') in TaskManager.MONTH_LIST:
                 _, days = calendar.monthrange(start.year, start.month)
                 return self._task.get('start_date') + datetime.timedelta(days-1)
-            if self.input.get('year') and not (self.input.get('startdate') or self.input.get('currentperiod') or self.input.get('monthname')):
+            if self.input.get('year') and not (self.input.get('startdate') or self.input.get('currentperiod') or self.input.get('monthname') or self.input.get('currentperiod') in TaskManager.MONTH_LIST):
                 return datetime.date(int(self.input.get('year')), 12, 31)
             return self.input.get('enddate')
 
@@ -486,16 +488,16 @@ class TaskManager(Worker):
             return True
 
         if self.input.get('command') == 'raw':
-            if not (self.input.get('currentperiod', False) or self.input.get('monthname', False) or self.input.get('year', False)):
-                self.log.error(f"В отчете типа raw может быть задан один из параметров: относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
-                raise WrongDatesParameter(f"В отчете типа raw может быть задан один из параметров: относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
-            elif self.input.get('startdate', False):
+            # if not (self.input.get('currentperiod', False) or self.input.get('monthname', False) or self.input.get('year', False)):
+            #     self.log.error(f"В отчете типа raw может быть задан один из параметров: относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
+            #     raise WrongDatesParameter(f"В отчете типа raw может быть задан один из параметров: относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
+            if self.input.get('startdate', False):
                 self.log.error(f"В отчете типа raw начальная дата не задается. Может быть задан один из параметров: относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
                 raise WrongDatesParameter(f"В отчете типа raw начальная дата не задается. Может быть задан один из параметров: относительный период (параметр --currentperiod, -cp), либо название месяца (параметр --monthname, -mn), либо год (параметр --year, -y)")
-            elif self.input.get('currentperiod', False) and self.input.get('monthname', False):
-                self.log.error(f"В отчете типа raw должен быть либо относительный период (параметр --currentperiod, -cp) либо название месяца (параметр --monthname, -mn)")
-                raise WrongDatesParameter(
-                    f"В отчете типа raw должен быть либо относительный период (параметр --currentperiod, -cp) либо название месяца (параметр --monthname, -mn)")
+            # elif self.input.get('currentperiod', False) and self.input.get('monthname', False):
+            #     self.log.error(f"В отчете типа raw должен быть либо относительный период (параметр --currentperiod, -cp) либо название месяца (параметр --monthname, -mn)")
+            #     raise WrongDatesParameter(
+            #         f"В отчете типа raw должен быть либо относительный период (параметр --currentperiod, -cp) либо название месяца (параметр --monthname, -mn)")
             elif self.input.get('currentperiod', False) in ['last_week', 'week', 'last_month', 'month'] and (self.input.get('monthname', False) or self.input.get('year', False)):
                 self.log.error(f"В отчете типа raw должен быть либо относительный период (параметр --currentperiod, -cp) либо название месяца (параметр --monthname, -mn) или год (параметр --year, -y)")
                 raise WrongDatesParameter(
@@ -560,7 +562,7 @@ class TaskManager(Worker):
         return date
 
     def _is_int(self, num):
-        if num == None:
+        if num is None:
             return False
         if isinstance(num, int):
             return True
