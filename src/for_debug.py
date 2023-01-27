@@ -1,7 +1,10 @@
-from report.etl import Extractor
+from report.etl import PomidorRulesList
+from common.complainer import *
 
-extr = Extractor(log_level='CRITICAL')
-path = 'D:\\3. Михайлов\\Develop\\PythonTraining\\ReportMaker\\tests\\testdata\\TestNotes'
-file = 'err_empty_pom_part.md'
-ext_data = extr.parseFile(path, file)
-print(ext_data)
+cmp = Complainer(PomidorRulesList())
+
+pom = "Обычный текст без разделителя\n"
+
+result = cmp.compliance(pom)
+
+print(result)

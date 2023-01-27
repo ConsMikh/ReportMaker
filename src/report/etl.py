@@ -7,6 +7,7 @@ import os
 import pandas as pd
 
 from common.worker import PartMaker, Worker
+from common.complainer import *
 
 from datetime import date, timedelta
 
@@ -136,3 +137,17 @@ class Loader(Worker):
     def dataframe_to_csv(self):
         self._dataframe.to_csv(
             'Docs\\Base\\Reports\\raw\\report.csv', index=False)
+
+
+class PomidorRulesList(RulesList):
+
+    def check_01_has_parts(self, val):
+        '''Проверяет помидорку на наличие частей, разделенных : '''
+        if isinstance(val, str):
+            parts_num = val.split(':')
+            if len(parts_num) < 2:
+                raise ComplainError(
+                    f"В записи {val} отсутствуют части, разделенные :")
+            else:
+                return True
+        raise ComplainError(f"{val} - не строка")
