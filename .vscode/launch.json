@@ -14,7 +14,9 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "raw"
+                "raw",
+                "-cp",
+                "last_week"
             ]
             //            "args" : ["entity", "-t", "project", "-e", "Fundamentals of DE",  "-cp", "last_week", "--structure", "full", "--output", "md"]
             // "args": [

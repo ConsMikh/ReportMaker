@@ -87,35 +87,45 @@ class Extractor(Worker):
 
 class Transformer(Worker):
     '''Преобразует записи о помидорках из файла в список кортежей
-
-    Возможные ошибки:
-    - неверный формат записи
-    - неправильные разделители
-    - неправильное количество блоков
-    - нет количества помидорок вообще
-    - количество помидорок не числом и не +
     '''
 
     def transform(self, date, block, file_exist):
+
+        cmp = Complainer(PomidorRulesList())
         transform_block = []
-        for line in block:
-            # self.log.debug(f"Запись для анализа {line}")
-            line_parts = line.split(':')
-            pom_rec = [date, file_exist]
-            timespend = line_parts[-1]
-            for ind, part in enumerate(line_parts):
-                if (part != timespend):
-                    pom_rec.append(part.strip())
-                else:
-                    while ind < 4:
-                        pom_rec.append(pd.NA)
-                        ind += 1
-            if ('+' in timespend):
-                timespend = timespend.count('+')
-            pom_rec.append(int(timespend))
-            transform_block.append(tuple(pom_rec))
-        # self.log.debug(f"Трансформированный блок {transform_block}")
-        return transform_block
+        if block == ['0']:
+            return [(date, file_exist, "Без указания", "Без указания", "Без указания", "Без указания", 0)]
+        else:
+            for line in block:
+                # self.log.debug(f"Запись для анализа {line}")
+                if cmp.compliance(line):
+                    line_parts = line.split(':')
+                    pom_rec = [date, file_exist]
+                    timespend = line_parts[-1]
+                    for ind, part in enumerate(line_parts):
+                        if (part != timespend):
+                            pom_rec.append(part.strip())
+                        else:
+                            while ind < 4:
+                                pom_rec.append("Без указания")
+                                ind += 1
+                    pom_num = self._get_pom_num_num(timespend)
+                    pom_rec.append(pom_num)
+                    transform_block.append(tuple(pom_rec))
+            return transform_block
+
+    def _get_pom_num_num(self, pom_num):
+        '''Подсчет количества помидорок'''
+        num_list = []
+        for part in pom_num.split(" "):
+            for p in part.split("+"):
+                try:
+                    num = int(p)
+                    num_list.append(num)
+                except ValueError:
+                    pass
+        num_list.append(pom_num.count("+"))
+        return sum(num_list)
 
 
 class Loader(Worker):
@@ -192,7 +202,19 @@ class PomidorRulesList(RulesList):
                 return True
         raise ComplainError(f"{val} - не строка")
 
+    def check_first_part(self, val):
+        '''Первая часть не должна быть пустой'''
+        if isinstance(val, str):
+            parts_num = val.split(':')
+            if parts_num[0] == '':
+                raise ComplainError(
+                    f"Первая часть не должна быть пустой: {val} ")
+            else:
+                return True
+        raise ComplainError(f"{val} - не строка")
+
     def _get_pom_num_num(self, pom_num):
+        '''Подсчет количества помидорок'''
         num_list = []
         for part in pom_num.split(" "):
             for p in part.split("+"):

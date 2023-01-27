@@ -128,3 +128,11 @@ def test_err_full_note_2(extractor):
     test_target = target + target[1:]
 
     assert test_block == test_target
+
+
+def test_no_file(extractor):
+    '''Извлечение данных, если файл не существует'''
+    file = 'no_file.md'
+    test_block = extractor.parseFile(path, file)
+
+    assert test_block == [False, '0']

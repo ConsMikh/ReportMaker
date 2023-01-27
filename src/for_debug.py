@@ -1,9 +1,8 @@
-from report.etl import PomidorRulesList
+from report.etl import *
 from common.complainer import *
 
-l = PomidorRulesList()
+pom = ['0']
 
-pom = "3+++ 5 +++"
-
-num = l._get_pom_num_num(pom)
-print(num)
+tr = Transformer()
+ret = tr.transform('2023-01-27', pom, True)
+ret
