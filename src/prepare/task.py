@@ -41,17 +41,18 @@ class TaskManager(Worker):
 
         self.log.debug(
             "Установка известных параметров")
+
         self._task['report_date'] = datetime.datetime.today().strftime(
             "%d-%m-%Y %H:%M")
         self._task['report_maker'] = prog_name
         self._task['report_type'] = self.input.get('command')
         self._task['entity_type'] = self.input.get('type')
-
         self._task['daily_path'] = self.settings.get(
             'path', {}).get('daily_base')
         self._task['kbase_path'] = self.settings.get('path', {}).get('kbase')
         self._task['raw_path'] = self.settings.get('path', {}).get('raw_path')
-
+        self._task['start_date'] = self._set_start_date()
+        self._task['end_date'] = self._set_end_date()
         self._task['output'] = self._set_output()
         self._task['entity_name'] = self._set_entity_name()
         self._task['start_date'] = self._set_start_date()

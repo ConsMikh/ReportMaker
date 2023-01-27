@@ -84,4 +84,3 @@ class ScreenVisualizer(Exporter):
         print(*clean_report)
         self.log.info(f"Завершен вывод на экран")
 
-
