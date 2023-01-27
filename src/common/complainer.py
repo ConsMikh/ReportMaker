@@ -6,24 +6,32 @@ import logging
 
 class Complainer():
     '''
-    _summary_
     Проводит проверку объектов на соответствие набору правил
     Набор правил задается объектов класса RulesList
 
     Метода complaince последовательно применяет все проверки к объекту.
     Если они пройдены, то возвращает True
+
+    logger - если установлен в True, то описание ошибок про выполнении правил
+    будет выводится сообщения в консоль
+
+    raised - если установлен в True, то Complainer будет пробрасывать ошибки 
+    при выполнении правил выше
     '''
 
-    def __init__(self, rules_list=None, logger=False) -> None:
+    def __init__(self, rules_list=None, logger=False, raised=False) -> None:
         if isinstance(rules_list, RulesList):
             self.rules_list = rules_list
         if logger:
             self.log = self._get_logger()
+        self.raised = raised
 
     def _log(self, mes):
         '''Вывод лога'''
         if hasattr(self, 'log'):
             self.log.debug(mes)
+        if self.raised:
+            raise ComplainError(mes)
 
     def _get_logger(self):
         '''Создание логера '''
@@ -44,7 +52,6 @@ class Complainer():
         '''Установить список правил в явном виде'''
         if isinstance(rules_list, RulesList):
             self.rules_list = rules_list
-            self._log(f"Набор правил установлен")
         else:
             self._log(
                 f"Неверный набор правил. Не подкласс RulesList")

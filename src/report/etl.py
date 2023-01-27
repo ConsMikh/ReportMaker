@@ -151,3 +151,55 @@ class PomidorRulesList(RulesList):
             else:
                 return True
         raise ComplainError(f"{val} - не строка")
+
+    def check_02_num_parts(self, val, *args, **kwarg):
+        '''Количество частей в записи помидорки должно быть больше 2 и меньше 5 '''
+        if isinstance(val, str):
+            parts_num = val.split(':')
+            if len(parts_num) < 2 or len(parts_num) > 5:
+                raise ComplainError(
+                    f"Неверное количество частей в записи: {val} ")
+            else:
+                return True
+        raise ComplainError(f"{val} - не строка")
+
+    def check_03_num_pom(self, val):
+        '''Последняя часть должна содержать либо последовательность +, либо 1 число'''
+        if isinstance(val, str):
+            parts_num = val.split(':')
+            pom_num = parts_num[-1]
+            if pom_num == '\n':
+                raise ComplainError(
+                    f"Неверный формат количества помидор в записи: {val} ")
+            for c in pom_num:
+                if c not in [" ", "+", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "\n"]:
+                    raise ComplainError(
+                        f"Неверный формат количества помидор в записи: {val} ")
+            else:
+                return True
+        raise ComplainError(f"{val} - не строка")
+
+    def check_04_num_pom_2(self, val):
+        '''Число помидор  должно быть в диапазоне 1 - 48'''
+        if isinstance(val, str):
+            parts_num = val.split(':')
+            pom_num_str = parts_num[-1]
+            pom_num_num = self._get_pom_num_num(pom_num_str.strip())
+            if pom_num_num < 1 or pom_num_num > 48:
+                raise ComplainError(
+                    f"Число помидор  должно быть в диапазоне 1 - 48: {val} ")
+            else:
+                return True
+        raise ComplainError(f"{val} - не строка")
+
+    def _get_pom_num_num(self, pom_num):
+        num_list = []
+        for part in pom_num.split(" "):
+            for p in part.split("+"):
+                try:
+                    num = int(p)
+                    num_list.append(num)
+                except ValueError:
+                    pass
+        num_list.append(pom_num.count("+"))
+        return sum(num_list)

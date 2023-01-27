@@ -1,10 +1,9 @@
 from report.etl import PomidorRulesList
 from common.complainer import *
 
-cmp = Complainer(PomidorRulesList())
+l = PomidorRulesList()
 
-pom = "Обычный текст без разделителя\n"
+pom = "3+++ 5 +++"
 
-result = cmp.compliance(pom)
-
-print(result)
+num = l._get_pom_num_num(pom)
+print(num)
