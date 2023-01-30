@@ -107,5 +107,39 @@ class RulesList():
         raise StopIteration
 
 
+class RulesList2():
+    '''
+    Родительский класс для всех списков правил.
+    Правила реализуются как функции, декорированные @check
+    Объект класса является итератором. На каждой итерации применяется очередное правило
+    Функции, которые начинаются не с check_ не считаются проверками и при итерировании не возвращаются
+
+    Каждая функция проверки в случае провала должна вызывать исключение ComplainError
+    Функции проверки не должны зависеть друг от друга.
+
+    '''
+
+    r_list = []
+
+    def __init__(self) -> None:
+        # self.rules = [meth for meth in dir(self) if "check_" in meth]
+        pass
+
+    def __iter__(self):
+        self.ind = 0
+        return self
+
+    def __next__(self):
+        if self.ind < len(RulesList2.r_list):
+            func = RulesList2.r_list[self.ind]
+            self.ind += 1
+            return func
+        raise StopIteration
+
+    def check(func):
+        RulesList2.r_list.append(func)
+        return (func)
+
+
 class ComplainError(Exception):
     pass

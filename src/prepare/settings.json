@@ -1,9 +1,9 @@
 {
     "path": {
-        "daily_base": "tests\\testdata\\DailyBase",
         "kbase": "tests\\testdata\\KBase",
         "output_md_path": "tests\\testdata\\Reports\\md",
-        "output_json_path": "tests\\testdata\\Reports\\json"
+        "output_json_path": "tests\\testdata\\Reports\\json",
+        "daily_base": "D:\\Base\\"
     },
     "analyst": {
         "norma": 14,

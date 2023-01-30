@@ -1,0 +1,9 @@
+{
+    "path": {
+        "kbase": "tests\\testdata\\KBase",
+        "set": "set"
+    },
+    "analyst": {
+        "norma": 14
+    }
+}

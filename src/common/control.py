@@ -19,13 +19,15 @@ class ReportMaker(Worker):
         self.cl_params = list(*args)[1:]
         self.prog_name = list(*args)[0]
         self.report = {}
+        self.cl_parser = CLParser(log_level='INFO')
+        self.set_parser = SettingsParser(log_level='INFO')
 
     def command_line_parsing(self):
         '''Создание парсера командной строки и получение словаря параметров командной строки'''
         self.log.info("Парсинг командной строки")
-        cl_parser = CLParser(log_level='INFO')
+
         try:
-            self.namespace = cl_parser.get_input_namespace(self.cl_params)
+            self.namespace = self.cl_parser.get_input_namespace(self.cl_params)
             self.log.debug(f"****************INPUT*********************")
             self.log.debug(f"{self.namespace}")
             self.log.debug(f"*****************************************")
@@ -36,9 +38,10 @@ class ReportMaker(Worker):
     def settings_file_parsing(self):
         '''Парсинг файла настроек'''
         self.log.info("Парсинг файла настроек")
-        set_parser = SettingsParser(log_level='INFO')
+
         try:
-            self.settings = set_parser.get_settings_namespace()
+            self.settings = self.set_parser.get_settings_namespace()
+            self.set_parser.check_settings()
             self.log.debug(f"****************SETTINGS*********************")
             self.log.debug(f"{self.settings}")
             self.log.debug(f"*****************************************")
@@ -89,18 +92,24 @@ class ReportMaker(Worker):
         '''Запуск процесса создания отчета'''
         self.log.info("***********Start************")
         self.command_line_parsing()
-        self.settings_file_parsing()
-        self.make_task()
-        self.make_scenario()
-        for ind, part in enumerate(self.scenario):
-            self.log.info(f"****************STEP {ind+1}*********************")
-            part_worker = part(self.task, self.report, log_level='INFO')
-            try:
-                part_worker.process()
-            except Exception as e:
-                self.log.error(
-                    f"При выполнении {part_worker.__class__.__name__} произошла ошибка: {e}")
 
-        self.log.debug(f"****************REPORT*********************")
-        self.log.debug(f"{self.report}")
-        self.log.debug(f"*******************************************")
+        if (self.namespace.get('command') == 'set'):
+            self.set_parser.change_settings(self.namespace)
+        else:
+            self.settings_file_parsing()
+
+            self.make_task()
+            self.make_scenario()
+            for ind, part in enumerate(self.scenario):
+                self.log.info(
+                    f"****************STEP {ind+1}*********************")
+                part_worker = part(self.task, self.report, log_level='INFO')
+                try:
+                    part_worker.process()
+                except Exception as e:
+                    self.log.error(
+                        f"При выполнении {part_worker.__class__.__name__} произошла ошибка: {e}")
+
+            self.log.debug(f"****************REPORT*********************")
+            self.log.debug(f"{self.report}")
+            self.log.debug(f"*******************************************")

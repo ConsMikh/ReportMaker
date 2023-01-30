@@ -14,9 +14,11 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "raw",
-                "-cp",
-                "last_week"
+                "set",
+                "-g",
+                "path",
+                "-sp",
+                "daily_base = D:\\Base\\"
             ]
             //            "args" : ["entity", "-t", "project", "-e", "Fundamentals of DE",  "-cp", "last_week", "--structure", "full", "--output", "md"]
             // "args": [

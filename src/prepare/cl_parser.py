@@ -3,7 +3,6 @@
 '''
 
 import argparse
-import datetime
 import pathlib
 
 from common.worker import Worker
@@ -71,6 +70,11 @@ class CLParser(Worker):
         raw.add_argument('--monthname', '-mn')
         raw.add_argument('--year', '-y', type=int)
         raw.add_argument('--reportpath', '-rp', type=pathlib.Path)
+
+        set = subparsers.add_parser('set')
+        set.add_argument('--set_param', '-sp')
+        set.add_argument('--del_param', '-dp')
+        set.add_argument('--group', '-g')
 
         self.log.debug(
             'Парсер командной строки создан')
