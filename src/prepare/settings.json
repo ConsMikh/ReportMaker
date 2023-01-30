@@ -1,9 +1,9 @@
 {
     "path": {
-        "kbase": "tests\\testdata\\KBase",
+        "kbase": "D:\\Data\\Obsidian\\ConstantinVault\\KBase",
         "output_md_path": "tests\\testdata\\Reports\\md",
         "output_json_path": "tests\\testdata\\Reports\\json",
-        "daily_base": "D:\\Base\\"
+        "daily_base": "D:\\Data\\Obsidian\\ConstantinVault\\Daily"
     },
     "analyst": {
         "norma": 14,

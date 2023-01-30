@@ -2,5 +2,5 @@
 src/logs/
 .pytest_cache/
 venv/
-logs/*
+logs/report.log
 .coverage

@@ -5,4 +5,3 @@ pom = ['0']
 
 tr = Transformer()
 ret = tr.transform('2023-01-27', pom, True)
-ret
