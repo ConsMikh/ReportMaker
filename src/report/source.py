@@ -41,8 +41,8 @@ class SourcePartMaker(PartMaker):
 
         str_source.append(
             f"\n\nДата создания отчета: {self.report['metadata']['report_date']}\n")
-        str_source.append(
-            f"Отчет создан: {self.report['metadata']['report_maker']}\n")
+        # str_source.append(
+        #     f"Отчет создан: {self.report['metadata']['report_maker']}\n")
 
         self.report['source']['str_source'] = str_source
         self.log.info(f"Часть с источниками создана")

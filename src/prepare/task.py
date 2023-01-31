@@ -50,7 +50,8 @@ class TaskManager(Worker):
         self._task['daily_path'] = self.settings.get(
             'path', {}).get('daily_base')
         self._task['kbase_path'] = self.settings.get('path', {}).get('kbase')
-        self._task['raw_path'] = self.settings.get('path', {}).get('raw_path')
+        self._task['raw_path'] = self.settings.get(
+            'path', {}).get('output_json_path')
         self._task['start_date'] = self._set_start_date()
         self._task['end_date'] = self._set_end_date()
         self._task['output'] = self._set_output()
@@ -304,7 +305,7 @@ class TaskManager(Worker):
         if self.input['reportpath']:
             return self.input['reportpath']
         elif self.input['command'] == 'raw':
-            return self.settings['path']['raw_path']
+            return self.settings['path']['output_json_path']
         elif self.input['output'] == 'md':
             return self.settings['path']['output_md_path']
         elif self.input['output'] == 'json':

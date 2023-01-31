@@ -106,6 +106,7 @@ class ReportMaker(Worker):
                     f"****************STEP {ind+1}*********************")
                 part_worker = part(self.task, self.report,
                                    log_level=self.log_level)
+                # part_worker.process()
                 try:
                     part_worker.process()
                 except Exception as e:

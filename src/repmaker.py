@@ -12,6 +12,7 @@ from common.control import ReportMaker
 
 def main():
     report_maker = ReportMaker(sys.argv, log_level='ERROR')
+    # report_maker.start()
     try:
         report_maker.start()
     except Exception as e:

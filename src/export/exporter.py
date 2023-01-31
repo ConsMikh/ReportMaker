@@ -47,9 +47,12 @@ class JSONExporter(Exporter):
 
     def process(self):
         self.log.info(f"Начат экспорт в файл JSON")
-        data = self.report['dataframe'].apply((lambda x: ''.join([c for c in x if c not in set(['[',']'])])), axis = 1)
-        self.report['dataframe'].to_json(path_or_buf = os.path.join(self.task['raw_path'],f"raw_{datetime.date.today().strftime('%Y-%m-%d')}.json") , orient = 'records')
+        data = self.report['dataframe'].applymap(lambda x: ''.join([c for c in x if c not in ['[',']']]) if not isinstance(x, bool) and not isinstance(x, int) else x)
+        data.to_json(path_or_buf = os.path.join(self.task['raw_path'],f"raw_{datetime.date.today().strftime('%Y-%m-%d')}.json") , orient = 'records')
+        # self.report['dataframe'].to_json(path_or_buf = os.path.join(self.task['raw_path'],f"raw_{datetime.date.today().strftime('%Y-%m-%d')}.json") , orient = 'records')
         self.log.info(f"Завершен экспорт в файл JSON")
+
+
 
 
 class MarkdownExporter(Exporter):

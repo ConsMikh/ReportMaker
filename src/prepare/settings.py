@@ -58,6 +58,12 @@ class SettingsParser(Worker):
         except Exception as e:
             self.log.warning(
                 f'Получена ошибка при выполнении парсинга файла настроек: {e}')
+        self.settings['analyst']['min_year'] = int(
+            self.settings['analyst']['min_year'])
+        self.settings['analyst']['max_year'] = int(
+            self.settings['analyst']['max_year'])
+        self.settings['analyst']['norma'] = int(
+            self.settings['analyst']['norma'])
         return self.settings
 
     def check_settings(self):

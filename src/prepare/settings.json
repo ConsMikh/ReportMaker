@@ -7,7 +7,7 @@
     },
     "analyst": {
         "norma": 14,
-        "max_year": 2100,
-        "min_year": 2010
+        "max_year": 2025,
+        "min_year": 2021
     }
 }

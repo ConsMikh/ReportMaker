@@ -52,14 +52,14 @@ class PeriodPartMaker(PartMaker):
             f"Формирование данных о периоде завершено")
 
     def _get_start_date(self, start_date):
-        if start_date == datetime.date(self.task['min_year'], 1, 1):
+        if start_date == datetime.date(int(self.task['min_year']), 1, 1):
             data = self.report['dataframe']
             return datetime.date.fromisoformat(data['date'].loc[data['file_exist'] == True].iloc[0])
         else:
             return start_date
 
     def _get_end_date(self, end_date):
-        if end_date == datetime.date(self.task['max_year'], 12, 31):
+        if end_date == datetime.date(int(self.task['max_year']), 12, 31):
             return datetime.date.today()
         else:
             return end_date
