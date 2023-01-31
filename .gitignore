@@ -2,5 +2,7 @@
 src/logs/
 .pytest_cache/
 venv/
-logs/report.log
+logs/*
 .coverage
+*token.txt*
+*report.log*
