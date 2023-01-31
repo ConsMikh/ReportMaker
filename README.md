@@ -89,6 +89,6 @@ $repmaker raw -cp last_month
 
 [Структура отчета](Docs/Report_struct.md)
 
-[Проектирование](Docs/Proj.md)
+[Порядок разработки](Docs/Proj.md)
 
-[Тестирование](Docs/Testing.md)
+
