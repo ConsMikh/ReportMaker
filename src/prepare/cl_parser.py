@@ -33,7 +33,7 @@ class CLParser(Worker):
         '''Реализация парсера входных аргументов'''
         self.log.debug(
             'Создание парсера командной строки')
-        parser = argparse.ArgumentParser()
+        parser = argparse.ArgumentParser(add_help=True, )
         subparsers = parser.add_subparsers(dest='command')
 
         period = subparsers.add_parser('period')
@@ -75,9 +75,9 @@ class CLParser(Worker):
         set.add_argument('--set_param', '-sp')
         set.add_argument('--del_param', '-dp')
         set.add_argument('--group', '-g')
-
-        self.log.debug(
-            'Парсер командной строки создан')
+        set.add_argument('--show', '-s', action='store_const', const=True)
+        set.add_argument('--set_default', '-sd',
+                         action='store_const', const=True)
 
         return parser
 

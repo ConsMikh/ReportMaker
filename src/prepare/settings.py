@@ -12,10 +12,10 @@ class SettingsParser(Worker):
 
     DEFAULT_SETTINGS = {
         "path": {
-            "daily_base": "tests\\testdata\\DailyBase",
-            "kbase": "tests\\testdata\\KBase",
-            "output_md_path": "tests\\testdata\\Reports\\md",
-            "output_json_path": "tests\\testdata\\Reports\\json",
+            "daily_base": "D:\\DailyBase",
+            "kbase": "D:\\KBase",
+            "output_md_path": "D:\\Reports\\md",
+            "output_json_path": "D:\\Reports\\json",
         },
         "analyst": {
             "norma": 14,
@@ -36,6 +36,7 @@ class SettingsParser(Worker):
 
     def _set_default_settings(self, dir=None):
         self.settings = SettingsParser.DEFAULT_SETTINGS
+        self.rewrite_settings()
 
     def _set_setting(self, part, key, value):
         self.settings[part][key] = value
@@ -74,6 +75,14 @@ class SettingsParser(Worker):
     def change_settings(self, input):
         '''Меняет настройки'''
         self.settings = self.get_settings_namespace()
+
+        if input.get('show', False):
+            self.pretty_print(self.settings)
+            return
+
+        if input.get('set_default', False):
+            self._set_default_settings()
+            return
 
         group = input.get('group', False)
 
@@ -121,6 +130,14 @@ class SettingsParser(Worker):
                 json.dump(self.settings, f, indent=4)
         except:
             pass
+
+    def pretty_print(self, d, indent=0):
+        for key, value in d.items():
+            print('\t' * indent + str(key))
+            if isinstance(value, dict):
+                self.pretty_print(value, indent+1)
+            else:
+                print('\t' * (indent+1) + str(value))
 
 
 class SettingsRulesList(RulesList):

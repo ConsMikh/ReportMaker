@@ -19,8 +19,9 @@ class ReportMaker(Worker):
         self.cl_params = list(*args)[1:]
         self.prog_name = list(*args)[0]
         self.report = {}
-        self.cl_parser = CLParser(log_level='INFO')
-        self.set_parser = SettingsParser(log_level='INFO')
+        self.log_level = log_level
+        self.cl_parser = CLParser(log_level=self.log_level)
+        self.set_parser = SettingsParser(log_level=self.log_level)
 
     def command_line_parsing(self):
         '''Создание парсера командной строки и получение словаря параметров командной строки'''
@@ -103,7 +104,8 @@ class ReportMaker(Worker):
             for ind, part in enumerate(self.scenario):
                 self.log.info(
                     f"****************STEP {ind+1}*********************")
-                part_worker = part(self.task, self.report, log_level='INFO')
+                part_worker = part(self.task, self.report,
+                                   log_level=self.log_level)
                 try:
                     part_worker.process()
                 except Exception as e:

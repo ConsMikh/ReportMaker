@@ -6,3 +6,5 @@ logs/*
 .coverage
 *token.txt*
 *report.log*
+build/*
+*/report_maker.egg-info/*
