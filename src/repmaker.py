@@ -4,7 +4,7 @@
 и подготовке отчетов на основе выполненного анализа
 '''
 
-__version__ = "v2.2.2"
+__version__ = "v2.3.0"
 
 import sys
 from common.control import ReportMaker
